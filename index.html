@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SoundSense Radar | Acoustic Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-theme">
+  <div class="app-container">
+    <!-- Top Navigation / Status Header -->
+    <header class="app-header">
+      <div class="brand-group">
+        <div class="status-orb active"></div>
+        <div class="brand-text">
+          <span class="app-title">SoundSense</span>
+          <span class="app-subtitle" id="connectionStatus">Standalone Demo</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="micToggleBtn" class="fluent-btn icon-btn" title="Toggle Live Microphone">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" x2="12" y1="19" y2="22"/>
+          </svg>
+          <span class="btn-label">Mic Live</span>
+        </button>
+
+        <button id="simToggleBtn" class="fluent-btn ghost-btn" title="Toggle Sound Simulator">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polygon points="10 8 16 12 10 16 10 8"/>
+          </svg>
+          <span>Simulate</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main View Area -->
+    <main class="main-viewport">
+      
+      <!-- MODE 1: STAND-BY RADAR VIEW (Matching user sketch) -->
+      <section id="standbyView" class="view-panel active-view">
+        <div class="radar-wrapper">
+          <!-- Canvas for 360 degree directional audio waves and circle -->
+          <canvas id="radarCanvas"></canvas>
+
+          <!-- Center Content Overlay (Dynamic alert message, icon, confidence) -->
+          <div class="radar-center-content" id="radarCenterContent">
+            <div class="alert-badge hidden" id="alertBadge">
+              <span class="alert-icon" id="centerIcon">🔊</span>
+              <div class="alert-text-group">
+                <h3 class="alert-title" id="centerTitle">Sound Detected</h3>
+                <p class="alert-direction" id="centerDirection">Analyzing direction...</p>
+              </div>
+              <div class="confidence-pill" id="confidencePill">0% match</div>
+            </div>
+            
+            <!-- Idle Center State -->
+            <div class="idle-state" id="idleState">
+              <div class="listening-pulse"></div>
+              <p class="idle-label">Listening for sounds...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Top 3 Confidence HUD (Matching Image 1) -->
+        <div class="top3-confidence-card" id="top3ConfidenceHud">
+          <div class="hud-card-header">
+            <span class="hud-header-title">ONNX MODEL PROBABILITIES</span>
+            <span class="hud-badge-live">TOP 3</span>
+          </div>
+          <div class="top3-prob-list" id="top3ProbList">
+            <!-- Populated dynamically via app.js matching Image 1 -->
+          </div>
+        </div>
+
+        <!-- Bottom Mode Info & Quick Actions -->
+        <div class="standby-footer">
+          <div class="mode-badge">
+            <span class="pulse-dot"></span>
+            <span>Stand-by mode</span>
+          </div>
+
+          <button id="goToConversationBtn" class="mode-switch-btn" title="Switch to conversation mode">
+            <span class="speech-dot"></span>
+            <span class="btn-text">Conversation mode</span>
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- MODE 2: CONVERSATION / LIVE CAPTIONS VIEW -->
+      <section id="conversationView" class="view-panel">
+        <div class="conversation-header">
+          <button id="backToStandbyBtn" class="fluent-btn ghost-btn back-btn">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="19" y1="12" x2="5" y2="12"/>
+              <polyline points="12 19 5 12 12 5"/>
+            </svg>
+            <span>Stand-by mode</span>
+          </button>
+          
+          <div class="speaker-direction-indicator" id="speakerDirectionIndicator">
+            <span class="speaker-pin-icon">🎯</span>
+            <span id="speakerDirectionText">Speaker in Front (0°)</span>
+          </div>
+        </div>
+
+        <!-- Mini Radar thumbnail for orientation in conversation mode -->
+        <div class="mini-radar-container">
+          <canvas id="miniRadarCanvas" width="120" height="120"></canvas>
+          <div class="mini-radar-caption">Acoustic Radar Active</div>
+        </div>
+
+        <!-- Live Subtitles & Captions Stream -->
+        <div class="captions-container" id="captionsContainer">
+          <div class="caption-bubble active" id="activeCaptionBubble">
+            <span class="caption-timestamp" id="liveStatusBadge">Live Transcript</span>
+            <p class="caption-text" id="liveSubtitleText">
+              <span class="confirmed-text" style="color: var(--text-muted); font-size: 1.05rem; font-weight: 500;">Listening for speech / Vorbiți la microfon...</span>
+              <span class="cursor-blink">|</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Conversation Controls & Quick Speech Input -->
+        <div class="conversation-footer">
+          <button class="fluent-btn" id="clearCaptionsBtn" title="Clear conversation history">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+            <span>Clear</span>
+          </button>
+
+          <!-- Quick Speech Simulator bar -->
+          <form id="speechTestForm" class="speech-test-form" onsubmit="return false;">
+            <input type="text" id="speechTextInput" placeholder="Type test speech or speak into mic..." class="speech-input">
+            <button type="submit" id="sendSpeechTestBtn" class="fluent-btn primary-btn send-speech-btn">
+              <span>Send</span>
+            </button>
+          </form>
+          
+          <div class="audio-energy-meter" title="Live Voice Energy Level">
+            <div class="energy-bar-fill" id="conversationEnergyBar"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Interactive Simulation Bar (Test different sound triggers & directions) -->
+    <aside class="simulation-drawer" id="simulationDrawer">
+      <div class="drawer-header">
+        <div class="drawer-title">
+          <span class="drawer-icon">⚡</span>
+          <span>Sound Event Simulator</span>
+        </div>
+        <button id="closeSimBtn" class="close-btn">&times;</button>
+      </div>
+
+      <p class="drawer-help">Click any event below to simulate directional acoustic detection:</p>
+
+      <!-- Local ONNX Model Classes Grid -->
+      <div class="preset-triggers">
+        <button class="sim-card" data-sound="crying_baby" data-title="Crying Baby" data-direction="on your right" data-angle="60" data-icon="👶" data-color="#EC4899" data-intensity="1.1">
+          <div class="card-icon" style="background: rgba(236, 72, 153, 0.15); color: #EC4899;">👶</div>
+          <div class="card-info">
+            <div class="card-name">Crying Baby</div>
+            <div class="card-sub">Right side (60°) &bull; Infant Distress</div>
+          </div>
+        </button>
+
+        <button class="sim-card" data-sound="dog" data-title="Small Dog Bark" data-direction="in front" data-angle="0" data-icon="🐕" data-color="#FACC15" data-intensity="0.95">
+          <div class="card-icon" style="background: rgba(250, 204, 21, 0.15); color: #FACC15;">🐕</div>
+          <div class="card-info">
+            <div class="card-name">Small Dog Bark</div>
+            <div class="card-sub">Front (0°) &bull; High Pitch</div>
+          </div>
+        </button>
+
+        <button class="sim-card" data-sound="siren" data-title="Emergency Siren" data-direction="approaching behind" data-angle="180" data-icon="🚑" data-color="#EF4444" data-intensity="1.1">
+          <div class="card-icon" style="background: rgba(239, 68, 68, 0.15); color: #EF4444;">🚑</div>
+          <div class="card-info">
+            <div class="card-name">Emergency Siren</div>
+            <div class="card-sub">Behind (180°) &bull; Critical Alert</div>
+          </div>
+        </button>
+
+        <button class="sim-card" data-sound="car_horn" data-title="Car Horn Blast" data-direction="on your left" data-angle="300" data-icon="🚗" data-color="#F97316" data-intensity="0.95">
+          <div class="card-icon" style="background: rgba(249, 115, 22, 0.15); color: #F97316;">🚗</div>
+          <div class="card-info">
+            <div class="card-name">Car Horn Blast</div>
+            <div class="card-sub">Left side (300°) &bull; Loud Blast</div>
+          </div>
+        </button>
+
+        <button class="sim-card" data-sound="door_wood_knock" data-title="Door Knock" data-direction="on your left" data-angle="270" data-icon="🚪" data-color="#38BDF8" data-intensity="0.8">
+          <div class="card-icon" style="background: rgba(56, 189, 248, 0.15); color: #38BDF8;">🚪</div>
+          <div class="card-info">
+            <div class="card-name">Door Knock</div>
+            <div class="card-sub">Left (270°) &bull; Rhythmic Tap</div>
+          </div>
+        </button>
+
+        <button class="sim-card" data-sound="clapping" data-title="Applause / Clapping" data-direction="behind you" data-angle="150" data-icon="👏" data-color="#A855F7" data-intensity="0.85">
+          <div class="card-icon" style="background: rgba(168, 85, 247, 0.15); color: #A855F7;">👏</div>
+          <div class="card-info">
+            <div class="card-name">Applause / Clapping</div>
+            <div class="card-sub">Back-Right (150°) &bull; Crowd Clapping</div>
+          </div>
+        </button>
+
+        <button class="sim-card" data-sound="conversation" data-title="Speech / Conversation" data-direction="in front" data-angle="0" data-icon="💬" data-color="#10B981" data-intensity="0.85">
+          <div class="card-icon" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">💬</div>
+          <div class="card-info">
+            <div class="card-name">Speech / Conversation</div>
+            <div class="card-sub">Human voice &bull; Dialogue detected</div>
+          </div>
+        </button>
+
+        <button class="sim-card" data-sound="background" data-title="Ambient Background Noise" data-direction="ambient 360°" data-angle="0" data-icon="🍃" data-color="#64748B" data-intensity="0.4">
+          <div class="card-icon" style="background: rgba(100, 116, 139, 0.15); color: #94A3B8;">🍃</div>
+          <div class="card-info">
+            <div class="card-name">Ambient Background Noise</div>
+            <div class="card-sub">Normal room chatter &bull; No Alarm</div>
+          </div>
+        </button>
+      </div>
+
+      <!-- Real Audio File Classifier (Upload test) -->
+      <div class="custom-trigger-box">
+        <label class="slider-label">
+          <span>Test Real Audio File (.wav, .mp3):</span>
+          <span class="badge">ONNX Engine</span>
+        </label>
+        <input type="file" id="audioFileInput" accept="audio/*" class="file-input-hidden">
+        <button id="uploadAudioBtn" class="fluent-btn primary-btn upload-btn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <span>Choose Audio File to Classify</span>
+        </button>
+      </div>
+
+      <!-- Live Probabilities Breakdown -->
+      <div class="probabilities-panel" id="probabilitiesPanel">
+        <div class="panel-header">
+          <span>ONNX Model Probabilities</span>
+        </div>
+        <div class="prob-list" id="probList">
+          <!-- Populated dynamically via app.js -->
+        </div>
+      </div>
+
+      <!-- Live Direction Slider to test any angle on the circle -->
+      <div class="custom-trigger-box">
+        <label class="slider-label">
+          <span>Manual Direction Angle:</span>
+          <span id="angleDisplay" class="badge">60°</span>
+        </label>
+        <input type="range" id="manualAngleSlider" min="0" max="359" value="60" class="fluent-slider">
+
+        <div class="custom-buttons">
+          <button id="triggerCustomSoundBtn" class="fluent-btn primary-btn">Trigger Sound at Angle</button>
+          <button id="toggleAmbientNoiseBtn" class="fluent-btn ghost-btn">Ambient Chatter: ON</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Backdrop for drawer on mobile -->
+    <div class="backdrop" id="backdrop"></div>
+  </div>
+
+  <script src="js/audio.js"></script>
+  <script src="js/radar.js"></script>
+  <script src="js/websocket.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
