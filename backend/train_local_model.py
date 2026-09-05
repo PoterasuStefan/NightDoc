@@ -1,4 +1,5 @@
 ﻿import os
+import random
 import pandas as pd
 import numpy as np
 import torch
@@ -16,26 +17,13 @@ if sys.stdout.encoding != 'utf-8':
     except Exception:
         pass
 
-# 1. Clase medicale si de mediu pentru RespiSense AI / NightDoc
+# 1. Clase medicale și de context pentru NightDoc
 SELECTED_CLASSES = ['coughing', 'breathing', 'snoring', 'sneezing', 'crying_baby', 'conversation', 'background']
 CLASS_TO_IDX = {cls: idx for idx, cls in enumerate(SELECTED_CLASSES)}
-print(f"RespiSense AI - Clase respiratorii selectate ({len(SELECTED_CLASSES)}): {CLASS_TO_IDX}")
+print(f"RespiSense AI / NightDoc - Clase selectate ({len(SELECTED_CLASSES)}): {CLASS_TO_IDX}")
 
-# Mapare directoare suplimentare din COUGHVID / Coswara catre clasele principale
-FOLDER_MAPPING = {
-    'tuse_seaca_dry': 'coughing',
-    'tuse_productiva_heavy': 'coughing',
-    'respiratie_profunda_wheezing': 'breathing',
-    'respiratie_superficiala_detresa': 'breathing',
-    'conversatie': 'conversation',
-    'conversation': 'conversation',
-    'speech': 'conversation',
-    'background': 'background',
-    'fundal': 'background'
-}
-
-# 2. Dataset personalizat cu segmentare audio de 3 secunde
-class ChunkedSoundDataset(Dataset):
+# 2. Dataset personalizat cu echilibrare (Max Chunks per clasa pentru a elimina Bias-ul)
+class BalancedRespiDataset(Dataset):
     def __init__(self, raw_samples, sample_rate=22050, duration=3.0):
         self.sample_rate = sample_rate
         self.target_len = int(sample_rate * duration)
@@ -45,21 +33,22 @@ class ChunkedSoundDataset(Dataset):
             hop_length=512,
             n_mels=64
         )
-        self.samples = []
         
-        print(f"Procesam si segmentam {len(raw_samples)} fisiere audio respiratorii/medicale...")
+        # Colectam mostrele per clasa pentru echilibrare
+        class_samples = {cls: [] for cls in SELECTED_CLASSES}
+        
+        print(f"Procesam si segmentam {len(raw_samples)} fisiere audio brute...")
         for file_path, category in raw_samples:
             if category not in CLASS_TO_IDX:
                 continue
             label = CLASS_TO_IDX[category]
             try:
                 data, sr = sf.read(file_path, dtype='float32')
-            except Exception as e:
+            except Exception:
                 continue
 
             waveform = torch.from_numpy(data)
             
-            # Gestionare stereo -> mono
             if waveform.ndim == 2:
                 waveform = waveform.t()
                 waveform = torch.mean(waveform, dim=0, keepdim=True)
@@ -73,26 +62,15 @@ class ChunkedSoundDataset(Dataset):
             L = waveform.shape[1]
             dur = L / self.sample_rate
 
-            if category in ['coughing', 'sneezing']:
-                hop_sec = 0.5
-                max_chunks = 150
-            elif category in ['breathing', 'snoring']:
-                hop_sec = 0.75
-                max_chunks = 120
+            # Reglare hop
+            if category == 'background':
+                hop_sec = 2.0
             elif category == 'conversation':
-                hop_sec = 4.0
-                max_chunks = 80
-            elif category == 'background':
-                if dur > 120.0:
-                    hop_sec = 8.0
-                elif dur > 40.0:
-                    hop_sec = 3.0
-                else:
-                    hop_sec = 1.5
-                max_chunks = 60
+                hop_sec = 1.5
+            elif category in ['coughing', 'sneezing']:
+                hop_sec = 1.0
             else:
                 hop_sec = 1.0
-                max_chunks = 100
 
             hop_samples = int(self.sample_rate * hop_sec)
 
@@ -103,19 +81,37 @@ class ChunkedSoundDataset(Dataset):
                 padded = torch.nn.functional.pad(waveform, (0, self.target_len - L))
                 spec = self.mel_transform(padded)
                 spec = torch.log(spec + 1e-9)
-                self.samples.append((spec, one_hot))
+                class_samples[category].append((spec, one_hot))
             else:
-                count = 0
                 for start in range(0, L - self.target_len + 1, hop_samples):
                     chunk = waveform[:, start:start + self.target_len]
                     spec = self.mel_transform(chunk)
                     spec = torch.log(spec + 1e-9)
-                    self.samples.append((spec, one_hot))
-                    count += 1
-                    if count >= max_chunks:
-                        break
-                    
-        print(f"Total segmente respiratorii generate pentru antrenare: {len(self.samples)}")
+                    class_samples[category].append((spec, one_hot))
+
+        # Adaugam mostre sintetice de liniste curata pentru clasa 'background' (pentru a elimina zgomotul fals)
+        for _ in range(100):
+            noise = torch.randn(1, self.target_len) * 0.001
+            spec = self.mel_transform(noise)
+            spec = torch.log(spec + 1e-9)
+            one_hot_bg = torch.zeros(len(SELECTED_CLASSES), dtype=torch.float32)
+            one_hot_bg[CLASS_TO_IDX['background']] = 1.0
+            class_samples['background'].append((spec, one_hot_bg))
+
+        # Echilibrare: limitam fiecare clasa la maxim 250 segmente pentru a preveni bias-ul
+        self.samples = []
+        MAX_PER_CLASS = 280
+        print("\nDistributie segmente finale per clasa:")
+        for cls in SELECTED_CLASSES:
+            items = class_samples[cls]
+            random.seed(42)
+            random.shuffle(items)
+            chosen = items[:MAX_PER_CLASS]
+            self.samples.extend(chosen)
+            print(f"  - {cls:<15}: {len(chosen)} segmente (din {len(items)} disponibile)")
+
+        random.shuffle(self.samples)
+        print(f"\nTotal segmente echilibrate in dataset: {len(self.samples)}")
 
     def __len__(self):
         return len(self.samples)
@@ -124,7 +120,7 @@ class ChunkedSoundDataset(Dataset):
         spec, target = self.samples[idx]
         return spec, target
 
-# 3. Modelul CNN Usor (optimizat pentru Edge / Microsoft ONNX Runtime)
+# 3. Modelul CNN
 class LightSoundCNN(nn.Module):
     def __init__(self, num_classes):
         super(LightSoundCNN, self).__init__()
@@ -166,36 +162,64 @@ if __name__ == "__main__":
     
     raw_samples = []
     
-    # 1. Date ESC-50
+    # 1. ESC-50 Dataset (Medical + Ambient bogat + Speech)
     if os.path.exists(csv_path):
         df = pd.read_csv(csv_path)
-        medical_categories = ['coughing', 'breathing', 'snoring', 'sneezing', 'crying_baby']
-        df_medical = df[df['category'].isin(medical_categories)]
-        for _, row in df_medical.iterrows():
+        
+        # Medicale
+        for cat in ['coughing', 'breathing', 'snoring', 'sneezing', 'crying_baby']:
+            for _, row in df[df['category'] == cat].iterrows():
+                fpath = os.path.join(audio_path, row['filename'])
+                if os.path.exists(fpath):
+                    raw_samples.append((fpath, cat))
+                    
+        # Conversatie / Voce umana din ESC-50
+        for _, row in df[df['category'].isin(['laughing'])].iterrows():
             fpath = os.path.join(audio_path, row['filename'])
             if os.path.exists(fpath):
-                raw_samples.append((fpath, row['category']))
+                raw_samples.append((fpath, 'conversation'))
                 
-        esc_ambient_categories = ['rain', 'wind', 'footsteps', 'clock_tick', 'keyboard_typing', 'insects']
-        for cat in esc_ambient_categories:
-            for f in df[df['category'] == cat]['filename'].head(15):
-                fpath = os.path.join(audio_path, f)
+        # Zgomot ambiental divers din ESC-50
+        ambient_categories = [
+            'rain', 'wind', 'footsteps', 'clock_tick', 'keyboard_typing',
+            'insects', 'sea_waves', 'crickets', 'chirping_birds', 'water_drops',
+            'can_opening', 'vacuum_cleaner', 'mouse_click', 'door_wood_knock',
+            'clapping', 'drinking_sipping', 'toilet_flush', 'washing_machine'
+        ]
+        for cat in ambient_categories:
+            for _, row in df[df['category'] == cat].head(25).iterrows():
+                fpath = os.path.join(audio_path, row['filename'])
                 if os.path.exists(fpath):
                     raw_samples.append((fpath, 'background'))
-                
-    # 2. Date Clinice Suplimentare COUGHVID & Coswara
+                    
+    # 2. Date Clinice COUGHVID, Coswara si Sounds-Coughs
     if os.path.exists(additional_dir):
         for root, _, files in os.walk(additional_dir):
             for f in files:
-                if f.lower().endswith('.wav'):
-                    folder_name = os.path.basename(root).lower()
-                    target_category = FOLDER_MAPPING.get(folder_name, folder_name)
-                    if target_category in CLASS_TO_IDX:
-                        raw_samples.append((os.path.join(root, f), target_category))
-                        
-    print(f"Total fisiere audio unice incarcate (ESC-50 + COUGHVID/Coswara): {len(raw_samples)}")
+                if not f.lower().endswith('.wav'):
+                    continue
+                fpath = os.path.join(root, f)
+                fname = f.lower()
+                folder = os.path.basename(root).lower()
+                
+                # Clasificare inteligenta pentru fisierele din Sounds-Coughs
+                if 'sounds-coughs' in root.lower():
+                    if 'cough' in fname:
+                        raw_samples.append((fpath, 'coughing'))
+                    elif any(w in fname for w in ['wheez', 'crackl', 'stridor', 'breathing', 'vesicular', 'friction', 'rattle']):
+                        raw_samples.append((fpath, 'breathing'))
+                elif folder in ['tuse_seaca_dry', 'tuse_productiva_heavy']:
+                    raw_samples.append((fpath, 'coughing'))
+                elif folder in ['respiratie_profunda_wheezing', 'respiratie_superficiala_detresa']:
+                    raw_samples.append((fpath, 'breathing'))
+                elif folder in ['conversatie', 'conversation', 'speech']:
+                    raw_samples.append((fpath, 'conversation'))
+                elif folder in ['background', 'fundal']:
+                    raw_samples.append((fpath, 'background'))
+
+    print(f"Total fisiere unice incarcate: {len(raw_samples)}")
     
-    dataset = ChunkedSoundDataset(raw_samples)
+    dataset = BalancedRespiDataset(raw_samples)
     
     train_size = int(0.85 * len(dataset))
     test_size = len(dataset) - train_size
@@ -206,13 +230,13 @@ if __name__ == "__main__":
     test_loader = DataLoader(test_set, batch_size=32, shuffle=False)
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Antrenam RespiSense AI pe: {device}")
+    print(f"Antrenam pe: {device}")
     
     model = LightSoundCNN(num_classes=len(SELECTED_CLASSES)).to(device)
     criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     
-    print("Incepe antrenarea modelului respirator (30 epoci)...")
+    print("Incepe antrenarea modelului echilibrat (30 epoci)...")
     for epoch in range(30):
         model.train()
         total_loss = 0
@@ -245,4 +269,4 @@ if __name__ == "__main__":
         dynamic_axes={'audio_spectrogram': {0: 'batch_size'}, 'class_probabilities': {0: 'batch_size'}},
         dynamo=False
     )
-    print(f"[SUCCES] Modelul RespiSense AI imbogatit cu COUGHVID a fost exportat in: {onnx_file}")
+    print(f"[SUCCES] Modelul echilibrat a fost exportat in: {onnx_file}")

@@ -13,23 +13,24 @@ from fhir_formatter import fhir_formatter, MEDICAL_CODES
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ONNX_PATH = os.path.join(BASE_DIR, "sound_radar_model.onnx")
 
-# Praguri de sensibilitate configurabile
-ALERT_CONFIDENCE_THRESHOLD = 25.0
-BACKGROUND_THRESHOLD = 15.0
+# Praguri de sensibilitate si poarta de energie (RMS Gate)
+SILENCE_RMS_THRESHOLD = 0.0045      # Sub acest prag e liniste/zgomot neglijabil de camera
+ALERT_CONFIDENCE_THRESHOLD = 30.0   # Prag minim pentru declansare alerta clinica
+SPEECH_CONFIDENCE_THRESHOLD = 25.0  # Prag detectie voce/vorbire
 
 CLASS_METADATA = {
     'coughing': {
         'title': 'Coughing Episode (Tuse)',
         'icon': '🫁',
-        'color': '#EF4444',       # Roșu Clinic
-        'description': 'Episod de tuse paroxistică / criză acută',
+        'color': '#EF4444',       # Rosu Clinic
+        'description': 'Episod de tuse paroxistica / criza acuta',
         'is_alert': True,
         'criticality': 'high',
         'snomed': '263731006',
         'loinc': '8687-6'
     },
     'breathing': {
-        'title': 'Breathing / Wheezing (Respirație)',
+        'title': 'Breathing / Wheezing (Respiratie)',
         'icon': '🌬️',
         'color': '#38BDF8',       # Albastru Azur
         'description': 'Model acustic respirator / wheezing suierat',
@@ -39,30 +40,30 @@ CLASS_METADATA = {
         'loinc': '9279-1'
     },
     'snoring': {
-        'title': 'Snoring / Apnea Risk (Sforăit)',
+        'title': 'Snoring / Apnea Risk (Sforait)',
         'icon': '💤',
         'color': '#F59E0B',       # Portocaliu / Chihlimbar
-        'description': 'Perturbare căi aeriene superioare în somn',
+        'description': 'Perturbare cai aeriene superioare in somn',
         'is_alert': True,
         'criticality': 'medium',
         'snomed': '271600006',
         'loinc': '93832-4'
     },
     'sneezing': {
-        'title': 'Sneezing Episode (Strănut)',
+        'title': 'Sneezing Episode (Stranut)',
         'icon': '🤧',
         'color': '#A855F7',       # Violet
-        'description': 'Reflex respirator acut căi superioare',
+        'description': 'Reflex respirator acut cai superioare',
         'is_alert': True,
         'criticality': 'low',
         'snomed': '16962002',
         'loinc': '8688-4'
     },
     'crying_baby': {
-        'title': 'Neonatal / Pediatric Distress (Plâns Copil)',
+        'title': 'Pediatric Distress (Plans Copil)',
         'icon': '👶',
         'color': '#EC4899',       # Roz Intens
-        'description': 'Detresă acustică neonatală sau pediatrică',
+        'description': 'Detresa acustica neonatala sau pediatrica',
         'is_alert': True,
         'criticality': 'high',
         'snomed': '271633008',
@@ -72,17 +73,17 @@ CLASS_METADATA = {
         'title': 'Speech / Conversation (Vorbire)',
         'icon': '💬',
         'color': '#10B981',       # Verde Smarald
-        'description': 'Activitate vocală umană ambientală',
+        'description': 'Activitate vocala umana ambientala',
         'is_alert': False,
         'criticality': 'none',
         'snomed': '286369001',
         'loinc': 'LA11874-7'
     },
     'background': {
-        'title': 'Ambient Baseline (Liniște / Mediu)',
+        'title': 'Ambient Baseline (Liniste / Mediu)',
         'icon': '🍃',
         'color': '#64748B',       # Gri Calibrare
-        'description': 'Zgomot de fond ambiental normal',
+        'description': 'Zgomot de fond ambiental normal / liniste',
         'is_alert': False,
         'criticality': 'none',
         'snomed': '162076009',
@@ -93,18 +94,16 @@ CLASS_METADATA = {
 CLASSES = ['coughing', 'breathing', 'snoring', 'sneezing', 'crying_baby', 'conversation', 'background']
 
 class RespiSenseClassifier:
-    def __init__(self, model_path=ONNX_PATH, alert_threshold=ALERT_CONFIDENCE_THRESHOLD):
+    def __init__(self, model_path=ONNX_PATH):
         self.model_path = model_path
         if not os.path.exists(model_path):
-            raise FileNotFoundError(f"RespiSense ONNX Model not found at: {model_path}")
+            raise FileNotFoundError(f"ONNX Model not found: {model_path}")
         
-        # Sesiune ONNX Runtime (Microsoft)
         self.session = ort.InferenceSession(self.model_path)
         self.input_name = self.session.get_inputs()[0].name
         
-        # Audio preprocessing
         self.target_sr = 22050
-        self.target_duration = 3.0  # secunde
+        self.target_duration = 3.0
         self.target_len = int(self.target_sr * self.target_duration)
         self.mel_transform = T.MelSpectrogram(
             sample_rate=self.target_sr,
@@ -112,21 +111,11 @@ class RespiSenseClassifier:
             hop_length=512,
             n_mels=64
         )
-        self.alert_threshold = alert_threshold
 
-        # Clinical Telemetry Session State
         self.session_start = time.time()
-        self.event_history = deque(maxlen=200) # Ultimele 200 de evenimente
+        self.event_history = deque(maxlen=200)
         self.fhir_observations = deque(maxlen=200)
-        self.counts = {
-            "coughing": 0,
-            "breathing": 0,
-            "snoring": 0,
-            "sneezing": 0,
-            "crying_baby": 0,
-            "conversation": 0,
-            "background": 0
-        }
+        self.counts = {cls: 0 for cls in CLASSES}
 
     def reset_telemetry(self):
         self.session_start = time.time()
@@ -139,8 +128,6 @@ class RespiSenseClassifier:
         dur_min = max(0.1, round((time.time() - self.session_start) / 60.0, 1))
         coughs = self.counts["coughing"]
         coughs_per_hour = round((coughs / dur_min) * 60.0, 1) if dur_min > 0 else 0.0
-        
-        # Calcul indice perturbare nocturnă (0-100)
         disturbance = min(100, int((coughs * 12) + (self.counts["snoring"] * 5) + (self.counts["crying_baby"] * 15)))
         
         return {
@@ -158,23 +145,12 @@ class RespiSenseClassifier:
 
     def preprocess_waveform(self, waveform: torch.Tensor, orig_sr: int) -> tuple[np.ndarray, float, float]:
         direction_angle = 0.0
-        is_true_stereo = False
-        
-        # Spatial angle estimation dacă e stereo
         if waveform.ndim == 2 and waveform.shape[0] >= 2:
-            diff = torch.mean(torch.abs(waveform[0] - waveform[1])).item()
-            if diff > 1e-5:
-                is_true_stereo = True
             waveform = torch.mean(waveform, dim=0, keepdim=True)
         elif waveform.ndim == 2:
             waveform = waveform[0:1]
         elif waveform.ndim == 1:
             waveform = waveform.unsqueeze(0)
-
-        if not is_true_stereo:
-            import random
-            sectors = [30, 75, 120, 180, 240, 290, 330]
-            direction_angle = float(random.choice(sectors) + random.randint(-5, 5)) % 360.0
 
         rms_energy = torch.sqrt(torch.mean(waveform ** 2)).item()
 
@@ -207,38 +183,78 @@ class RespiSenseClassifier:
         t0 = time.perf_counter()
         spec, direction_angle, rms_energy = self.preprocess_waveform(waveform, sr)
         
-        # Inferență Microsoft ONNX Runtime
+        # 1. POARTA DE ENERGIE (RMS SILENCE GATE)
+        # Daca este liniste in camera, returnam direct Background fara a risca alerte false
+        if rms_energy < SILENCE_RMS_THRESHOLD:
+            probs_percent = {cls: 0.0 for cls in CLASSES}
+            probs_percent['background'] = 100.0
+            predicted_class = 'background'
+            confidence = 100.0
+            is_alert = False
+            inference_time_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+            meta = CLASS_METADATA['background']
+            now_iso = datetime.now(timezone.utc).isoformat()
+            
+            return {
+                "success": True,
+                "is_alert": False,
+                "predicted_class": "background",
+                "title": meta['title'],
+                "icon": meta['icon'],
+                "color": meta['color'],
+                "confidence": 100.0,
+                "criticality": "none",
+                "direction_angle": 0.0,
+                "probabilities": probs_percent,
+                "rms_energy": round(rms_energy, 4),
+                "inference_ms": inference_time_ms,
+                "snomed": meta.get('snomed', ''),
+                "loinc": meta.get('loinc', '')
+            }
+
+        # 2. INFERENTA ONNX RUNTIME PE SUNET REAL
         outputs = self.session.run(None, {self.input_name: spec})
         logits = outputs[0][0]
         inference_time_ms = round((time.perf_counter() - t0) * 1000.0, 2)
 
-        # Multi-Label Sigmoid
+        # Multi-Label Sigmoid Probabilities (0.0% - 100.0%)
         probs = 1.0 / (1.0 + np.exp(-logits))
         probs_percent = {cls: round(float(p) * 100.0, 1) for cls, p in zip(CLASSES, probs)}
 
-        # Decizie
         bg_prob = probs_percent.get('background', 0.0)
-        alert_probs = {cls: p for cls, p in probs_percent.items() if cls != 'background'}
+        speech_prob = probs_percent.get('conversation', 0.0)
+        cough_prob = probs_percent.get('coughing', 0.0)
+        
+        alert_probs = {cls: p for cls, p in probs_percent.items() if cls not in ['background', 'conversation']}
         best_alert_cls, best_alert_prob = max(alert_probs.items(), key=lambda x: x[1])
 
-        if best_alert_prob >= self.alert_threshold and best_alert_prob > bg_prob:
+        # Decizie cu prioritizare robusta
+        if speech_prob >= SPEECH_CONFIDENCE_THRESHOLD and speech_prob >= cough_prob and speech_prob >= bg_prob:
+            predicted_class = 'conversation'
+            confidence = speech_prob
+            is_alert = False
+        elif best_alert_prob >= ALERT_CONFIDENCE_THRESHOLD and best_alert_prob > bg_prob and best_alert_prob > speech_prob:
             predicted_class = best_alert_cls
             confidence = best_alert_prob
             is_alert = CLASS_METADATA[predicted_class]['is_alert']
-        else:
+        elif bg_prob >= 20.0:
             predicted_class = 'background'
             confidence = bg_prob
             is_alert = False
+        else:
+            # Daca toate sunt scazute, alegem maximul absolut
+            top_cls = max(probs_percent.items(), key=lambda x: x[1])[0]
+            predicted_class = top_cls
+            confidence = probs_percent[top_cls]
+            is_alert = CLASS_METADATA[predicted_class]['is_alert'] if confidence >= ALERT_CONFIDENCE_THRESHOLD else False
 
         meta = CLASS_METADATA.get(predicted_class, CLASS_METADATA['background'])
         
-        # Increment counts
         if predicted_class in self.counts:
             self.counts[predicted_class] += 1
 
         now_iso = datetime.now(timezone.utc).isoformat()
 
-        # Generate FHIR Observation for Clinical Telemetry
         fhir_obs = fhir_formatter.create_observation(
             predicted_class=predicted_class,
             confidence=confidence,
