@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 import json
 import asyncio
@@ -314,6 +314,24 @@ async def serve_test_ui():
     if os.path.exists(test_path):
         return FileResponse(test_path)
     return JSONResponse(status_code=404, content={"error": "test.html not found"})
+
+@app.get("/download")
+@app.get("/download-apk")
+async def download_apk():
+    """Serves the compiled Android APK directly for easy download from mobile browser."""
+    possible_paths = [
+        os.path.join(ROOT_DIR, "NightDoc-Bedside-Sentinel.apk"),
+        os.path.join(ROOT_DIR, "android", "app", "build", "outputs", "apk", "debug", "NightDoc-Bedside-Sentinel.apk"),
+        os.path.join(ROOT_DIR, "android", "app", "build", "outputs", "apk", "debug", "app-debug.apk")
+    ]
+    for p in possible_paths:
+        if os.path.exists(p):
+            return FileResponse(
+                p, 
+                media_type="application/vnd.android.package-archive", 
+                filename="NightDoc-Bedside-Sentinel.apk"
+            )
+    return JSONResponse(status_code=404, content={"error": "APK file not found on server"})
 
 if os.path.exists(os.path.join(ROOT_DIR, "index.html")):
     @app.get("/")

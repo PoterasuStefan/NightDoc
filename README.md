@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 # 🌙 NightDoc / RespiSense AI
 ### Continuous Bedside Acoustic Biomarker Sentinel & Clinical Research Telemetry
@@ -130,12 +130,19 @@ python backend/main.py
 
 ---
 
-## 📱 Mobile Setup
+## 📱 Mobile Setup & Android APK
 
-You can run NightDoc at the bedside on any smartphone over local Wi-Fi:
+You can run NightDoc at the bedside on any smartphone in two ways:
+
+### 1. Direct Android APK Install (Native App)
+- **Direct Download from Server:** Open `http://<your-lan-ip>:8000/download` on your phone browser.
+- **Direct GitHub Download:** [**NightDoc-Bedside-Sentinel.apk (Direct Raw Download)**](https://github.com/PoterasuStefan/NightDoc/raw/mobile-app/NightDoc-Bedside-Sentinel.apk)
+- **Android Studio Project:** Complete native source code is hosted on the [`mobile-app` branch](https://github.com/PoterasuStefan/NightDoc/tree/mobile-app).
+
+### 2. Mobile Web Browser (Zero Install)
 1. Connect your phone to the same Wi-Fi network as your computer.
-2. The server displays your LAN IP on startup (e.g. `http://192.168.1.xxx:8000`).
-3. Open the link on Chrome / Safari and tap **Mic Live** to start nocturnal acoustic monitoring.
+2. Open `http://<your-lan-ip>:8000` (e.g. `http://10.25.131.40:8000`) on Chrome / Safari.
+3. Tap **Mic Live** to start nocturnal acoustic monitoring.
 
 ---
 
