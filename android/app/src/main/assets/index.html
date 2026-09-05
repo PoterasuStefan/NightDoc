@@ -1630,17 +1630,32 @@
       });
     });
 
-    // 4. Emergency Dispatch Button
+    // 4. Emergency Dispatch Button & Azure AI Content Understanding Trigger
     const emergencyBtn = document.getElementById('btn-emergency');
     if (emergencyBtn) {
-      emergencyBtn.addEventListener('click', () => {
+      emergencyBtn.addEventListener('click', async () => {
         emergencyBtn.classList.add('animate-pulse');
-        emergencyBtn.innerText = 'DISPATCHING CLINICAL ALERT...';
+        emergencyBtn.innerText = 'DISPATCHING CLINICAL ALERT (AZURE AI)...';
         if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        
+        try {
+          const resp = await fetch('/api/trigger-anomaly', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cough_count: totalCoughs || 8, duration: 45, severity: 'high' })
+          });
+          if (resp.ok) {
+            const data = await resp.json();
+            console.log('[*] Azure AI Content Understanding FHIR Anomaly created:', data);
+          }
+        } catch(e) {
+          console.warn('[*] Anomaly trigger error:', e);
+        }
+
         setTimeout(() => {
           emergencyBtn.classList.remove('animate-pulse');
-          emergencyBtn.innerText = 'ALERT DISPATCHED (ON-CALL NOTIFIED)';
-        }, 1600);
+          emergencyBtn.innerText = 'ALERT DISPATCHED (FHIR LOINC 8701-7)';
+        }, 1400);
       });
     }
 

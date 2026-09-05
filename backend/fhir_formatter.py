@@ -13,8 +13,8 @@ MEDICAL_CODES = {
         "display": "Coughing Episode / Paroxysm",
         "snomed_code": "263731006",
         "snomed_display": "Coughing (finding)",
-        "loinc_code": "8687-6",
-        "loinc_display": "Coughing [PhenX]",
+        "loinc_code": "8701-7",
+        "loinc_display": "Cough [Frequency]",
         "category": "respiratory-biomarker",
         "criticality": "high"
     },
@@ -74,10 +74,129 @@ MEDICAL_CODES = {
     }
 }
 
+
 class FHIRFormatter:
     def __init__(self, patient_id: str = "PATIENT-RESPISENSE-001", device_id: str = "DEVICE-ONNX-EDGE-01"):
         self.patient_id = patient_id
         self.device_id = device_id
+
+    def format_telemetry_observation(self, telemetry: Dict[str, Any], ai_summary: str) -> Dict[str, Any]:
+        """
+        Takes acoustic telemetry (cough count, duration, severity) and the AI summary,
+        returning a strict JSON dictionary matching the HL7 FHIR 'Observation' resource format.
+        Uses LOINC code '8701-7' for Cough.
+        """
+        obs_id = str(uuid.uuid4())
+        dt = datetime.now(timezone.utc).isoformat()
+        
+        cough_count = telemetry.get("cough_count", 0)
+        duration = telemetry.get("duration", telemetry.get("duration_minutes", 30))
+        severity = str(telemetry.get("severity", "moderate")).lower()
+
+        if severity == "high":
+            interpretation_code = "A"
+            interpretation_display = "Abnormal / High Acoustic Frequency"
+        elif severity in ["moderate", "medium"]:
+            interpretation_code = "W"
+            interpretation_display = "Warning / Moderate Acoustic Disturbance"
+        else:
+            interpretation_code = "N"
+            interpretation_display = "Normal Baseline"
+
+        fhir_observation = {
+            "resourceType": "Observation",
+            "id": obs_id,
+            "meta": {
+                "versionId": "1",
+                "lastUpdated": dt,
+                "profile": [
+                    "http://hl7.org/fhir/StructureDefinition/vitalsigns",
+                    "https://health.azure.com/fhir/StructureDefinition/respiratory-biomarker"
+                ]
+            },
+            "status": "final",
+            "category": [
+                {
+                    "coding": [
+                        {
+                            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                            "code": "vital-signs",
+                            "display": "Vital Signs"
+                        }
+                    ],
+                    "text": "Respiratory Acoustic Biomarkers"
+                }
+            ],
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "8701-7",
+                        "display": "Cough [Frequency]"
+                    },
+                    {
+                        "system": "http://snomed.info/sct",
+                        "code": "263731006",
+                        "display": "Coughing (finding)"
+                    }
+                ],
+                "text": "Cough Acoustic Telemetry Observation"
+            },
+            "subject": {
+                "reference": f"Patient/{self.patient_id}",
+                "display": "Monitored Respiratory Patient"
+            },
+            "device": {
+                "reference": f"Device/{self.device_id}",
+                "display": "RespiSense AI Bedside Acoustic Monitor"
+            },
+            "effectiveDateTime": dt,
+            "issued": dt,
+            "valueQuantity": {
+                "value": cough_count,
+                "unit": "events",
+                "system": "http://unitsofmeasure.org",
+                "code": "{events}"
+            },
+            "interpretation": [
+                {
+                    "coding": [
+                        {
+                            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+                            "code": interpretation_code,
+                            "display": interpretation_display
+                        }
+                    ]
+                }
+            ],
+            "note": [
+                {
+                    "text": ai_summary
+                }
+            ],
+            "component": [
+                {
+                    "code": {
+                        "coding": [{"system": "http://loinc.org", "code": "LA11875-4", "display": "Event Duration"}],
+                        "text": "Monitoring Period Duration"
+                    },
+                    "valueQuantity": {
+                        "value": float(duration),
+                        "unit": "min",
+                        "system": "http://unitsofmeasure.org",
+                        "code": "min"
+                    }
+                },
+                {
+                    "code": {
+                        "coding": [{"system": "http://loinc.org", "code": "LA31756-9", "display": "Acoustic Severity Rating"}],
+                        "text": "Assessed Acoustic Severity"
+                    },
+                    "valueString": severity
+                }
+            ]
+        }
+        return fhir_observation
 
     def create_observation(
         self,
@@ -97,15 +216,14 @@ class FHIRFormatter:
         dt = timestamp or datetime.now(timezone.utc).isoformat()
         code_meta = MEDICAL_CODES.get(predicted_class, MEDICAL_CODES["background"])
 
-        # Interpretation based on criticality & confidence
         if code_meta["criticality"] == "high" and confidence > 50.0:
-            interpretation_code = "A" # Abnormal
+            interpretation_code = "A"
             interpretation_display = "Abnormal / Clinical Alert"
         elif code_meta["criticality"] == "medium":
-            interpretation_code = "W" # Warning
+            interpretation_code = "W"
             interpretation_display = "Nocturnal Disturbance"
         else:
-            interpretation_code = "N" # Normal
+            interpretation_code = "N"
             interpretation_display = "Normal Baseline"
 
         fhir_observation = {
@@ -135,14 +253,14 @@ class FHIRFormatter:
             "code": {
                 "coding": [
                     {
-                        "system": "http://snomed.info/sct",
-                        "code": code_meta["snomed_code"],
-                        "display": code_meta["snomed_display"]
-                    },
-                    {
                         "system": "http://loinc.org",
                         "code": code_meta["loinc_code"],
                         "display": code_meta["loinc_display"]
+                    },
+                    {
+                        "system": "http://snomed.info/sct",
+                        "code": code_meta["snomed_code"],
+                        "display": code_meta["snomed_display"]
                     }
                 ],
                 "text": code_meta["display"]
@@ -240,6 +358,8 @@ class FHIRFormatter:
             "entry": entries
         }
 
+
+
     def create_consent_resource(self, patient_id: str = "PATIENT-RESPISENSE-001", policy_code: str = "opt-in-zero-audio-retention") -> Dict[str, Any]:
         """
         Generates an HL7 FHIR R4 Consent resource representing patient opt-in for
@@ -287,5 +407,6 @@ class FHIRFormatter:
                 "data": [{ "meaning": "related", "reference": { "reference": "Observation" } }]
             }
         }
+
 
 fhir_formatter = FHIRFormatter()

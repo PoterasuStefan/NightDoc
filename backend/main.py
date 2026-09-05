@@ -4,6 +4,7 @@ import json
 import asyncio
 import io
 import time
+from typing import Optional
 from glob import glob
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, UploadFile, File, Body
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,11 +21,16 @@ if sys.stdout.encoding != 'utf-8':
 from classifier import RespiSenseClassifier, CLASSES, CLASS_METADATA
 from azure_foundry import azure_service
 from fhir_formatter import fhir_formatter, MEDICAL_CODES
+from logger import log
+from models import AcousticTelemetryInput
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Initialize FastAPI App
 app = FastAPI(
-    title="RespiSense AI – Acoustic Biomarker & Clinical Telemetry Backend",
-    description="Edge AI (Microsoft ONNX Runtime) + Cloud Intelligence (Azure AI Foundry & HL7 FHIR R4)",
+    title="NightDoc / RespiSense AI – Acoustic Biomarker & Clinical Telemetry Backend",
+    description="Edge AI (Microsoft ONNX Runtime) + Cloud Intelligence (Azure AI Foundry, Content Understanding / Phi-3 & HL7 FHIR R4)",
     version="1.0.0"
 )
 
@@ -38,11 +44,11 @@ app.add_middleware(
 )
 
 # Load RespiSense ONNX Runtime Model
-print("==================================================================")
-print("  [*] Loading RespiSense AI ONNX Model (sound_radar_model.onnx)...")
+log.info("==================================================================")
+log.info("  [*] Loading RespiSense AI ONNX Model (sound_radar_model.onnx)...")
 classifier = RespiSenseClassifier()
-print(f"  [*] ONNX Model loaded successfully! Supported Health Classes: {CLASSES}")
-print("==================================================================")
+log.info(f"  [*] ONNX Model loaded successfully! Supported Health Classes: {CLASSES}")
+log.info("==================================================================")
 
 class ConnectionManager:
     def __init__(self):
@@ -51,12 +57,12 @@ class ConnectionManager:
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         self.active_connections.append(websocket)
-        print(f"WebSocket Client connected. Active clients: {len(self.active_connections)}")
+        log.info(f"WebSocket Client connected. Active clients: {len(self.active_connections)}")
 
     def disconnect(self, websocket: WebSocket):
         if websocket in self.active_connections:
             self.active_connections.remove(websocket)
-            print(f"WebSocket Client disconnected. Active clients: {len(self.active_connections)}")
+            log.info(f"WebSocket Client disconnected. Active clients: {len(self.active_connections)}")
 
     async def broadcast_json(self, data: dict, exclude: WebSocket = None):
         for connection in self.active_connections:
@@ -64,7 +70,7 @@ class ConnectionManager:
                 try:
                     await connection.send_json(data)
                 except Exception as e:
-                    print(f"Error broadcasting message: {e}")
+                    log.error(f"Error broadcasting message: {e}")
 
 manager = ConnectionManager()
 
@@ -75,7 +81,7 @@ async def get_model_info():
     """Returns local ONNX model configuration and medical coding metadata."""
     return {
         "status": "ready",
-        "project": "RespiSense AI",
+        "project": "RespiSense AI / NightDoc",
         "model_file": "sound_radar_model.onnx",
         "engine": "Microsoft ONNX Runtime",
         "classes": CLASSES,
@@ -120,12 +126,41 @@ async def export_fhir_bundle():
     bundle = fhir_formatter.create_bundle(all_obs)
     return bundle
 
+@app.get("/api/fhir/consent")
+async def get_fhir_consent():
+    """Generates a standard HL7 FHIR R4 Consent resource for research telemetry opt-in."""
+    return fhir_formatter.create_consent_resource()
+
 @app.post("/api/clinical-summary")
 async def generate_clinical_summary():
-    """Triggers Azure AI Foundry (Azure OpenAI) to analyze session telemetry and generate clinical insights."""
+    """Triggers Azure AI Foundry (Content Understanding / Phi-3 / Azure OpenAI) to analyze session telemetry."""
     summary_data = classifier.get_telemetry_summary()
     analysis = await azure_service.generate_clinical_summary(summary_data)
     return analysis
+
+@app.post("/api/trigger-anomaly")
+async def trigger_anomaly(payload: Optional[AcousticTelemetryInput] = Body(default=None)):
+    """
+    Accepts acoustic telemetry (cough count, duration, severity), calls Azure AI Foundry
+    (Azure AI Content Understanding / Phi-3 / Azure AI Inference) for a strict 2-sentence
+    non-diagnostic clinical summary, formats the result into an HL7 FHIR Observation resource
+    using LOINC code 8701-7 for Cough, and returns the final FHIR JSON payload.
+    """
+    if payload is None:
+        payload = AcousticTelemetryInput()
+        
+    telemetry_data = payload.dict()
+    
+    # 1. Generate strict 2-sentence non-diagnostic summary via Azure AI Foundry
+    clinical_summary = await azure_service.generate_acoustic_clinical_summary(telemetry_data)
+    
+    # 2. Format result into HL7 FHIR Observation resource JSON
+    fhir_observation = fhir_formatter.format_telemetry_observation(telemetry_data, clinical_summary)
+    
+    # Store in session observations list
+    classifier.fhir_observations.append(fhir_observation)
+    
+    return fhir_observation
 
 @app.post("/api/classify-audio")
 async def classify_audio(file: UploadFile = File(...)):
@@ -204,7 +239,7 @@ async def transcribe_and_broadcast(audio_bytes: bytes, angle: float):
                 }
             })
     except Exception as e:
-        print(f"Azure Speech Transcription Error: {e}")
+        log.error(f"Azure Speech Transcription Error: {e}")
 
 # ----------------- WebSocket Live Stream ----------------- #
 
@@ -216,7 +251,7 @@ async def acoustic_endpoint(websocket: WebSocket):
             "type": "status",
             "payload": {
                 "connected": True,
-                "label": "RespiSense AI Edge ONNX + Azure Foundry Connected",
+                "label": "NightDoc Edge ONNX + Azure Foundry Connected",
                 "classes": CLASSES,
                 "azure_configured": azure_service.is_configured(),
                 "telemetry": classifier.get_telemetry_summary()
@@ -296,16 +331,34 @@ async def acoustic_endpoint(websocket: WebSocket):
                         })
 
                 except Exception as e:
-                    print(f"Error processing JSON WebSocket message: {e}")
+                    log.error(f"Error processing JSON WebSocket message: {e}")
+                    await websocket.send_json({"type": "error", "payload": {"message": f"Invalid format: {e}"}})
                     
     except WebSocketDisconnect:
         manager.disconnect(websocket)
     except Exception as e:
-        print(f"WebSocket Error: {e}")
+        log.error(f"WebSocket Error: {e}")
         manager.disconnect(websocket)
 
-# ----------------- Static Frontend & Test UI ----------------- #
+# ----------------- Static Frontend & APK Downloads ----------------- #
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+@app.get("/download")
+async def download_apk():
+    """Serves the compiled NightDoc-Bedside-Sentinel Android APK."""
+    candidates = [
+        os.path.join(ROOT_DIR, "NightDoc-Bedside-Sentinel.apk"),
+        os.path.join(ROOT_DIR, "android", "app", "build", "outputs", "apk", "debug", "app-debug.apk"),
+        os.path.join(ROOT_DIR, "android", "app", "build", "outputs", "apk", "debug", "NightDoc-Bedside-Sentinel.apk")
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return FileResponse(
+                c, 
+                media_type="application/vnd.android.package-archive", 
+                filename="NightDoc-Bedside-Sentinel.apk"
+            )
+    return JSONResponse(status_code=404, content={"error": "APK file not found on server"})
 
 @app.get("/test")
 async def serve_test_ui():
@@ -314,24 +367,6 @@ async def serve_test_ui():
     if os.path.exists(test_path):
         return FileResponse(test_path)
     return JSONResponse(status_code=404, content={"error": "test.html not found"})
-
-@app.get("/download")
-@app.get("/download-apk")
-async def download_apk():
-    """Serves the compiled Android APK directly for easy download from mobile browser."""
-    possible_paths = [
-        os.path.join(ROOT_DIR, "NightDoc-Bedside-Sentinel.apk"),
-        os.path.join(ROOT_DIR, "android", "app", "build", "outputs", "apk", "debug", "NightDoc-Bedside-Sentinel.apk"),
-        os.path.join(ROOT_DIR, "android", "app", "build", "outputs", "apk", "debug", "app-debug.apk")
-    ]
-    for p in possible_paths:
-        if os.path.exists(p):
-            return FileResponse(
-                p, 
-                media_type="application/vnd.android.package-archive", 
-                filename="NightDoc-Bedside-Sentinel.apk"
-            )
-    return JSONResponse(status_code=404, content={"error": "APK file not found on server"})
 
 if os.path.exists(os.path.join(ROOT_DIR, "index.html")):
     @app.get("/")
@@ -353,11 +388,13 @@ def get_local_ip():
 
 if __name__ == "__main__":
     local_ip = get_local_ip()
-    print("==================================================================")
-    print("  [*] NightDoc / RespiSense AI Server Active")
-    print("  [*] Main App:    http://localhost:8000")
-    print("  [*] Simple Test: http://localhost:8000/test")
-    print(f"  [*] Phone (LAN): http://{local_ip}:8000")
-    print("  [*] API Docs:    http://localhost:8000/docs")
-    print("==================================================================")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.getenv("PORT", 8000))
+    log.info("==================================================================")
+    log.info("  [*] NightDoc / RespiSense AI Server Active")
+    log.info(f"  [*] Main App:    http://localhost:{port}")
+    log.info(f"  [*] Download APK:http://localhost:{port}/download")
+    log.info(f"  [*] Simple Test: http://localhost:{port}/test")
+    log.info(f"  [*] Phone (LAN): http://{local_ip}:{port}")
+    log.info(f"  [*] API Docs:    http://localhost:{port}/docs")
+    log.info("==================================================================")
+    uvicorn.run(app, host="0.0.0.0", port=port)
