@@ -1,4 +1,4 @@
-﻿"""
+"""
 Microsoft Azure AI Foundry & Azure Health Integration for RespiSense AI
 Features:
 1. Azure AI Foundry / OpenAI GPT-4o-mini Clinical Insights & Exacerbation Risk Scoring
@@ -16,15 +16,15 @@ from dotenv import load_dotenv
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
-AZURE_AI_API_KEY = os.getenv("AZURE_AI_API_KEY", "").strip()
-AZURE_AI_ENDPOINT = os.getenv("AZURE_AI_ENDPOINT", "https://stefanpoterasu-2164-resource.cognitiveservices.azure.com/").strip()
+AZURE_AI_KEY = os.getenv("AZURE_AI_API_KEY", "").strip()
+AZURE_AI_ENDPOINT = os.getenv("AZURE_AI_ENDPOINT", "https://your-azure-ai-resource.cognitiveservices.azure.com/").strip()
 AZURE_AI_REGION = os.getenv("AZURE_AI_REGION", "eastus").strip()
 AZURE_OPENAI_DEPLOYMENT = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini").strip()
 AZURE_SPEECH_LANGUAGE = os.getenv("AZURE_SPEECH_LANGUAGE", "ro-RO").strip()
 
 class AzureFoundryService:
     def __init__(self):
-        self.api_key = AZURE_AI_API_KEY
+        self.api_key = AZURE_AI_KEY
         self.endpoint = AZURE_AI_ENDPOINT.rstrip('/')
         self.region = AZURE_AI_REGION
         self.deployment = AZURE_OPENAI_DEPLOYMENT
@@ -36,7 +36,7 @@ class AzureFoundryService:
     def get_info(self) -> dict:
         return {
             "provider": "Microsoft Azure AI Foundry",
-            "resource": "stefanpoterasu-2164-resource",
+            "resource": os.getenv("AZURE_AI_RESOURCE_NAME", "azure-foundry-health-resource"),
             "endpoint": self.endpoint,
             "region": self.region,
             "deployment": self.deployment,

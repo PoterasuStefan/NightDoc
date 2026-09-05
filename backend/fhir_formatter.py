@@ -1,4 +1,4 @@
-﻿"""
+"""
 HL7 FHIR R4 Formatter for RespiSense AI
 Generates standard FHIR Observation and Bundle resources compliant with Azure Health Data Services (FHIR Server).
 Standards: LOINC, SNOMED CT, HL7 FHIR R4.
@@ -238,6 +238,54 @@ class FHIRFormatter:
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "total": len(observations),
             "entry": entries
+        }
+
+    def create_consent_resource(self, patient_id: str = "PATIENT-RESPISENSE-001", policy_code: str = "opt-in-zero-audio-retention") -> Dict[str, Any]:
+        """
+        Generates an HL7 FHIR R4 Consent resource representing patient opt-in for
+        ephemeral bedside acoustic telemetry under zero-cloud-audio retention policies.
+        """
+        consent_id = f"CONSENT-{str(uuid.uuid4())[:8].upper()}"
+        now_iso = datetime.now(timezone.utc).isoformat()
+        return {
+            "resourceType": "Consent",
+            "id": consent_id,
+            "status": "active",
+            "scope": {
+                "coding": [{
+                    "system": "http://terminology.hl7.org/CodeSystem/consentscope",
+                    "code": "patient-privacy",
+                    "display": "Privacy Consent"
+                }]
+            },
+            "category": [{
+                "coding": [{
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                    "code": "CLINRESRCH",
+                    "display": "Clinical Research Telemetry"
+                }]
+            }],
+            "patient": {
+                "reference": f"Patient/{patient_id}",
+                "display": "Monitored Bedside Patient"
+            },
+            "dateTime": now_iso,
+            "policyRule": {
+                "coding": [{
+                    "system": "http://nightdoc.ai/fhir/policies",
+                    "code": policy_code,
+                    "display": "Opt-In Local Edge Processing with Zero Cloud Audio Retention"
+                }]
+            },
+            "provision": {
+                "type": "permit",
+                "period": { "start": now_iso },
+                "purpose": [
+                    { "system": "http://terminology.hl7.org/CodeSystem/v3-ActReason", "code": "TREAT" },
+                    { "system": "http://terminology.hl7.org/CodeSystem/v3-ActReason", "code": "CLINRESRCH" }
+                ],
+                "data": [{ "meaning": "related", "reference": { "reference": "Observation" } }]
+            }
         }
 
 fhir_formatter = FHIRFormatter()
