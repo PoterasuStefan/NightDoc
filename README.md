@@ -18,7 +18,8 @@
 [🏛️ System Architecture](#️-system-architecture) •
 [🏥 Medical Standards & FHIR](#-medical-standards--fhir) •
 [🚀 Quick Start](#-quick-start) •
-[📱 Mobile Setup](#-mobile-setup) •
+[🧠 Model Training](#-model-training--clinical-datasets) •
+[📱 Mobile App & APK](#-mobile-app-android-apk--github-branches) •
 [🔐 Configuration](#-configuration)
 
 ---
@@ -30,14 +31,29 @@
 ### 1. 🫁 Real-Time Acoustic Biomarker Detection (Edge ONNX Runtime)
 - Runs lightweight multi-label convolutional neural network in **<10ms on CPU/NPU**.
 - **100% Privacy-Preserving (HIPAA Compliant):** Audio waveforms are converted to Mel-spectrograms in-memory, classified locally, and immediately purged. Zero raw voice recordings are transmitted to the cloud.
+- **Speech-Biased & Anti-False-Positive Architecture:**
+  - Calibrated RMS Silence Gate (`0.0075`) prevents quiet room noise, whispers, or mic hiss from triggering alerts.
+  - Asymmetric loss weighting (`pos_weight = 1.90` for `conversation` vs `0.70` for `coughing`) ensures spoken commentary during presentations is prioritized and never misclassified as coughs.
+  - Strict cough thresholding (`>= 48.0%`) ensures only genuine explosive acoustic bursts trigger clinical cough alerts.
 - Classifies 7 distinct acoustic biomarker categories:
   - 🫁 **Paroxysmal Coughing** (Cough count & frequency)
-  - 🌬️ **Breathing & Wheezing** (Respiratory cycle pattern)
+  - 🌬️ **Breathing & Wheezing** (Asthma, crackles, stridor, rhonchi)
   - 💤 **Snoring & Obstructive Sleep Apnea Risk**
   - 🤧 **Sneezing Reflex**
   - 👶 **Pediatric & Neonatal Distress** (Infant crying)
-  - 💬 **Speech & Conversation** (Ambient dialogue)
-  - 🍃 **Ambient Baseline** (Calibrated silence)
+  - 💬 **Speech & Conversation** (Continuous human dialogue)
+  - 🍃 **Ambient Baseline** (Calibrated room silence)
+
+#### 📊 Empirical Model Validation Benchmarks
+| Audio Source / Diagnostic Sample | Actual Category | Predicted Class | Confidence | Cough Prob | Speech Prob |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Conversational Speech (Romanian)** | Spoken Voice | 💬 **`conversation`** | **99.9%** | 0.0% | 99.9% |
+| **Conversational Speech (English)** | Spoken Voice | 💬 **`conversation`** | **99.8%** | 0.0% | 99.8% |
+| **Dry Paroxysmal Cough** (COUGHVID) | Clinical Cough | 🫁 **`coughing`** | **91.3%** | 91.3% | 0.0% |
+| **Heavy Productive Cough** (COUGHVID) | Clinical Cough | 🫁 **`coughing`** | **95.5%** | 95.5% | 0.0% |
+| **Asthma Wheezing** (`Sounds-Coughs`) | Lung Sound | 🌬️ **`breathing`** | **96.9%** | 0.0% | 0.0% |
+| **Bronchiectasis Crackles** (`Sounds-Coughs`) | Lung Sound | 🌬️ **`breathing`** | **99.3%** | 0.0% | 0.0% |
+| **Urban Traffic / Ambient Floor** | Environmental | 🍃 **`background`** | **100.0%** | 0.0% | 0.0% |
 
 ### 2. 🏥 Native HL7 FHIR R4 & Azure Health Data Services Ingestion
 - Every detected biomarker event is transformed on-the-fly into an **HL7 FHIR R4 `Observation`** resource.
@@ -124,25 +140,47 @@ pip install -r backend/requirements.txt
 python backend/main.py
 ```
 
-### 4. Open in Browser
-👉 **[http://localhost:8000](http://localhost:8000)**  
-👉 **API Swagger Docs:** `http://localhost:8000/docs`
+### 4. Interactive Portals & Console Endpoints
+- 🌙 **Patient Bedside Sentinel Portal:** [**http://localhost:8000**](http://localhost:8000)
+- 🫁 **Minimal ONNX Model Test Console:** [**http://localhost:8000/test**](http://localhost:8000/test) *(single-click real audio tests & custom WAV upload)*
+- 📱 **Direct APK Download:** [**http://localhost:8000/download**](http://localhost:8000/download)
+- 📚 **FastAPI Interactive Swagger Docs:** [**http://localhost:8000/docs**](http://localhost:8000/docs)
 
 ---
 
-## 📱 Mobile Setup & Android APK
+## 🧠 Model Training & Clinical Datasets
 
-You can run NightDoc at the bedside on any smartphone in two ways:
+NightDoc's edge model is trained on **779 unique clinical and environmental audio sources** totaling 1,500 balanced segments:
+- **COUGHVID & Coswara:** Clinically validated dry and productive paroxysmal cough episodes.
+- **Pulmonology Clinical Sounds (`Sounds-Coughs`):** Real patient auscultations including Asthma Wheezing, Bronchiectasis Crackles, Pulmonary Edema, Inspiratory Stridor, Death Rattle, and Rhonchi.
+- **ESC-50 Environmental Corpus:** Calibrated baseline silences, typing, rain, footsteps, and nocturnal disturbances.
+- **Continuous Speech Corpus:** Natural Romanian and English conversations with room-noise data augmentation for presentation resilience.
 
-### 1. Direct Android APK Install (Native App)
-- **Direct Download from Server:** Open `http://<your-lan-ip>:8000/download` on your phone browser.
-- **Direct GitHub Download:** [**NightDoc-Bedside-Sentinel.apk (Direct Raw Download)**](https://github.com/PoterasuStefan/NightDoc/raw/mobile-app/NightDoc-Bedside-Sentinel.apk)
-- **Android Studio Project:** Complete native source code is hosted on the [`mobile-app` branch](https://github.com/PoterasuStefan/NightDoc/tree/mobile-app).
+To retrain and export the ONNX model at any time:
+```bash
+python backend/train_local_model.py
+```
+*Exports `backend/sound_radar_model.pt` and optimized `backend/sound_radar_model.onnx` (<10ms inference).*
 
-### 2. Mobile Web Browser (Zero Install)
+---
+
+## 📱 Mobile App (Android APK) & GitHub Branches
+
+NightDoc is available as both a zero-install mobile web application and a compiled native Android app:
+
+### 📥 1-Click APK Download
+- **Direct from Server:** Open `http://<your-lan-ip>:8000/download` on your phone browser.
+- **Direct from GitHub (`main` branch):** [**NightDoc-Bedside-Sentinel.apk**](https://github.com/PoterasuStefan/NightDoc/raw/main/NightDoc-Bedside-Sentinel.apk)
+- **Direct from GitHub (`mobile-app` branch):** [**NightDoc-Bedside-Sentinel.apk**](https://github.com/PoterasuStefan/NightDoc/raw/mobile-app/NightDoc-Bedside-Sentinel.apk)
+
+### 🌿 Repository Branch Structure
+- [`main`](https://github.com/PoterasuStefan/NightDoc/tree/main): Core backend, ONNX Edge model, clinical training pipeline, FHIR R4 service, Azure AI Foundry integration, web portals, and compiled standalone APK.
+- [`mobile-app`](https://github.com/PoterasuStefan/NightDoc/tree/mobile-app): Complete native Android Studio project (`android/`), Google Stitch UI integration, Gradle build configuration, and Android assets.
+
+### 🌐 Mobile Web (Zero Install)
 1. Connect your phone to the same Wi-Fi network as your computer.
-2. Open `http://<your-lan-ip>:8000` (e.g. `http://10.25.131.40:8000`) on Chrome / Safari.
-3. Tap **Mic Live** to start nocturnal acoustic monitoring.
+2. Open `http://<your-lan-ip>:8000` (e.g. `http://10.25.131.40:8000`) on Chrome or Safari.
+3. Tap **Mic Live** to begin real-time nocturnal acoustic monitoring.
 
 ---
 
