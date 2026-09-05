@@ -146,7 +146,10 @@
 <span class="font-telemetry-val text-2xl text-[#f2ca50] font-bold tracking-tight" id="simple-live-db">34</span>
 <span class="font-label-caps text-xs text-[#94A3B8] font-medium">dB</span>
 </div>
-<span class="font-label-caps text-[10px] text-[#94A3B8]">Room Silence</span>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-[#94A3B8] transition-colors" id="gate-indicator"></span>
+<span class="font-label-caps text-[9px] text-[#94A3B8]" id="gate-status">Gate: 60 dB</span>
+</div>
 </div>
 </div>
 <!-- Live Acoustic Biomarker Probabilities (Multi-Label Sigmoid) -->
@@ -230,17 +233,17 @@
 <div class="h-full rounded-full bg-[#232a3b] transition-all duration-300" id="bar-infant" style="width: 0%;"></div>
 </div>
 </div>
-<!-- 6. Speech & Voice -->
+<!-- 6. Speech & Voice (Vibrant Violet Accent) -->
 <div class="flex flex-col gap-1.5">
 <div class="flex items-center justify-between">
 <div class="flex items-center gap-2 min-w-0">
-<span class="text-sm">💬</span>
-<span class="font-body-md text-[13px] text-[#94A3B8] truncate">Speech &amp; Voice</span>
+<span class="text-sm">🗣️</span>
+<span class="font-body-md text-[13px] font-semibold text-[#c084fc] truncate">Speech &amp; Voice</span>
 </div>
-<span id="val-speech" class="font-telemetry-val text-[13px] text-[#94A3B8] font-medium tracking-tight">0.0%</span>
+<span id="val-speech" class="font-telemetry-val text-[13px] text-[#c084fc] font-bold tracking-tight">0.0%</span>
 </div>
 <div class="w-full h-2 rounded-full bg-[#090D16]/90 p-[1px] border border-white/5 overflow-hidden">
-<div class="h-full rounded-full bg-[#232a3b] transition-all duration-300" id="bar-speech" style="width: 0%;"></div>
+<div class="h-full rounded-full bg-gradient-to-r from-[#8b5cf6] to-[#c084fc] shadow-[0_0_12px_rgba(192,132,252,0.55)] transition-all duration-300" id="bar-speech" style="width: 0%;"></div>
 </div>
 </div>
 <!-- 7. Ambient Silence (Highlight: Calm Mint/Emerald) -->
@@ -1728,7 +1731,7 @@
           if (iconEl) iconEl.textContent = 'pulmonology';
         } else if (cls === 'conversation') {
           titleEl.textContent = 'Speech Activity (Vorbire)';
-          titleEl.className = 'font-headline-sm text-lg text-[#4ECCA3] font-bold tracking-tight truncate';
+          titleEl.className = 'font-headline-sm text-lg text-[#c084fc] font-bold tracking-tight truncate';
           if (iconEl) iconEl.textContent = 'record_voice_over';
         } else if (cls === 'breathing') {
           titleEl.textContent = 'Wheezing / Respiration';
@@ -1774,8 +1777,12 @@
       if (barEl) barEl.style.width = val.toFixed(1) + '%';
     }
 
-    // 6. Live Mic RMS & Decibel Meter
+    // 6. Live Mic RMS & Decibel Meter (With 60 dB Activation Gate & Throttled Smooth Display)
     let audioCtx, analyser, micStream, processor;
+    const ACTIVATION_DB_THRESHOLD = 60; // 60 dB threshold for activating model
+    let currentLiveDb = 32;
+    let maxDbInChunk = 28;
+
     async function startMic() {
       try {
         micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -1786,7 +1793,7 @@
         analyser.fftSize = 512;
         source.connect(analyser);
 
-        // Audio processor to send chunks over WebSocket
+        // Audio processor to send chunks over WebSocket with 60 dB gate
         const bufferSize = 4096;
         processor = audioCtx.createScriptProcessor(bufferSize, 1, 1);
         let pcmBuffer = [];
@@ -1794,6 +1801,15 @@
         processor.onaudioprocess = (e) => {
           const input = e.inputBuffer.getChannelData(0);
           pcmBuffer.push(new Float32Array(input));
+
+          // Track block RMS to capture sound peaks inside chunk
+          let blkSum = 0;
+          for (let i = 0; i < input.length; i++) {
+            blkSum += input[i] * input[i];
+          }
+          const blkRms = Math.sqrt(blkSum / input.length);
+          const blkDb = Math.round(20 * Math.log10(blkRms + 1e-4) + 95);
+          if (blkDb > maxDbInChunk) maxDbInChunk = blkDb;
           
           const totalLen = pcmBuffer.reduce((acc, b) => acc + b.length, 0);
           if (totalLen >= 22050 * 2.5) {
@@ -1804,11 +1820,38 @@
               off += b.length;
             }
             pcmBuffer = [];
-            
-            // Convert to 16-bit WAV bytes
-            const wavBytes = encodeWAV(merged, 22050);
-            if (ws && ws.readyState === WebSocket.OPEN) {
-              ws.send(wavBytes);
+
+            const peakChunkDb = maxDbInChunk;
+            maxDbInChunk = 28; // Reset for next window
+
+            // --- 60 dB ACTIVATION GATE ---
+            if (peakChunkDb >= ACTIVATION_DB_THRESHOLD) {
+              // Sound reached 60+ dB: Send to ONNX model for classification
+              const wavBytes = encodeWAV(merged, 22050);
+              if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(wavBytes);
+              }
+            } else {
+              // Sub 60 dB threshold: Model stays in low-power standby
+              updateBar('coughing', 0);
+              updateBar('wheezing', 0);
+              updateBar('snoring', 0);
+              updateBar('sneezing', 0);
+              updateBar('infant', 0);
+              updateBar('speech', 0);
+              updateBar('ambient', 100);
+
+              const titleEl = document.getElementById('current-state-title');
+              const subEl = document.getElementById('current-state-sub');
+              const iconEl = document.getElementById('current-state-icon');
+              if (titleEl) {
+                titleEl.textContent = 'Ambient Calm (< 60 dB)';
+                titleEl.className = 'font-headline-sm text-lg text-text-primary font-semibold tracking-tight truncate';
+              }
+              if (iconEl) iconEl.textContent = 'spa';
+              if (subEl) {
+                subEl.textContent = 'Sub pragul de 60 dB • Model în Standby';
+              }
             }
           }
         };
@@ -1817,8 +1860,15 @@
 
         const dataArray = new Uint8Array(analyser.frequencyBinCount);
         const simpleDb = document.getElementById('simple-live-db');
+        const gateIndicator = document.getElementById('gate-indicator');
+        const gateStatus = document.getElementById('gate-status');
 
-        function updateMeter() {
+        // Smoothed Decibel Meter: Samples at 60fps, updates DOM every 350ms to prevent flashing
+        let lastDbRenderTime = 0;
+        let peakWindowDb = 28;
+        let smoothedDb = 32;
+
+        function updateMeter(timestamp) {
           if (analyser) {
             analyser.getByteTimeDomainData(dataArray);
             let sum = 0;
@@ -1827,12 +1877,37 @@
               sum += v * v;
             }
             const rms = Math.sqrt(sum / dataArray.length);
-            const db = Math.min(95, Math.max(28, Math.round(20 * Math.log10(rms + 1e-4) + 95)));
-            if (simpleDb) simpleDb.textContent = db.toString();
+            const instantDb = Math.min(95, Math.max(28, Math.round(20 * Math.log10(rms + 1e-4) + 95)));
+            currentLiveDb = instantDb;
+            
+            if (instantDb > peakWindowDb) peakWindowDb = instantDb;
+            smoothedDb = Math.round(0.65 * smoothedDb + 0.35 * instantDb);
+
+            // Update DOM display only every 350ms (prevents rapid flickering)
+            if (!lastDbRenderTime || (timestamp - lastDbRenderTime) >= 350) {
+              const displayVal = peakWindowDb >= ACTIVATION_DB_THRESHOLD ? peakWindowDb : smoothedDb;
+              if (simpleDb) simpleDb.textContent = displayVal.toString();
+
+              // Gate indicator status
+              if (gateIndicator && gateStatus) {
+                if (displayVal >= ACTIVATION_DB_THRESHOLD) {
+                  gateIndicator.className = 'w-1.5 h-1.5 rounded-full bg-[#4ECCA3] shadow-[0_0_6px_#4ECCA3] animate-ping';
+                  gateStatus.textContent = 'Active (≥ 60 dB)';
+                  gateStatus.className = 'font-label-caps text-[9px] text-[#4ECCA3] font-bold';
+                } else {
+                  gateIndicator.className = 'w-1.5 h-1.5 rounded-full bg-[#94A3B8]';
+                  gateStatus.textContent = 'Gate: 60 dB';
+                  gateStatus.className = 'font-label-caps text-[9px] text-[#94A3B8]';
+                }
+              }
+
+              peakWindowDb = instantDb;
+              lastDbRenderTime = timestamp;
+            }
           }
           requestAnimationFrame(updateMeter);
         }
-        updateMeter();
+        requestAnimationFrame(updateMeter);
       } catch(err) {
         console.log('[*] Mic stream running in passive mode:', err.message);
       }

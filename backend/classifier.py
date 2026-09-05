@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ONNX_PATH = os.path.join(BASE_DIR, "sound_radar_model.onnx")
 
 # Praguri de sensibilitate si poarta de energie (RMS Gate)
-SILENCE_RMS_THRESHOLD = 0.0075      # Sub acest prag e liniste/zgomot neglijabil de camera (calibrat anti-fals)
+SILENCE_RMS_THRESHOLD = 0.0178      # Prag de 60 dB pentru activarea clasificarii (anti-zgomot)
 ALERT_CONFIDENCE_THRESHOLD = 45.0   # Prag minim pentru declansare alerta clinica (breathing, snoring, etc.)
 SPEECH_CONFIDENCE_THRESHOLD = 20.0  # Prag detectie voce/vorbire (prioritate marita pentru speech bias la prezentare)
 COUGH_CONFIDENCE_THRESHOLD = 48.0   # Prag strict dedicat pentru tuse pentru a preveni detectia pe voce/pocnituri
@@ -73,7 +73,7 @@ CLASS_METADATA = {
     'conversation': {
         'title': 'Speech / Conversation (Vorbire)',
         'icon': '💬',
-        'color': '#10B981',       # Verde Smarald
+        'color': '#C084FC',       # Violet Vibrant
         'description': 'Activitate vocala umana ambientala',
         'is_alert': False,
         'criticality': 'none',
@@ -184,9 +184,10 @@ class RespiSenseClassifier:
         t0 = time.perf_counter()
         spec, direction_angle, rms_energy = self.preprocess_waveform(waveform, sr)
         
-        # 1. POARTA DE ENERGIE (RMS SILENCE GATE)
-        # Daca este liniste in camera, returnam direct Background fara a risca alerte false
-        if rms_energy < SILENCE_RMS_THRESHOLD:
+        # 1. POARTA DE ENERGIE (RMS SILENCE GATE - 60 dB THRESHOLD)
+        # Sub pragul de 60 dB consideram zgomot ambiental normal fara a rula inferenta ONNX
+        db_level = 20.0 * np.log10(rms_energy + 1e-4) + 95.0
+        if db_level < 60.0 or rms_energy < SILENCE_RMS_THRESHOLD:
             probs_percent = {cls: 0.0 for cls in CLASSES}
             probs_percent['background'] = 100.0
             predicted_class = 'background'
