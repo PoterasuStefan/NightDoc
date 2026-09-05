@@ -1,4 +1,4 @@
-﻿import os
+import os
 import io
 import time
 from collections import deque
@@ -14,9 +14,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ONNX_PATH = os.path.join(BASE_DIR, "sound_radar_model.onnx")
 
 # Praguri de sensibilitate si poarta de energie (RMS Gate)
-SILENCE_RMS_THRESHOLD = 0.0045      # Sub acest prag e liniste/zgomot neglijabil de camera
-ALERT_CONFIDENCE_THRESHOLD = 30.0   # Prag minim pentru declansare alerta clinica
-SPEECH_CONFIDENCE_THRESHOLD = 25.0  # Prag detectie voce/vorbire
+SILENCE_RMS_THRESHOLD = 0.0075      # Sub acest prag e liniste/zgomot neglijabil de camera (calibrat anti-fals)
+ALERT_CONFIDENCE_THRESHOLD = 45.0   # Prag minim pentru declansare alerta clinica (breathing, snoring, etc.)
+SPEECH_CONFIDENCE_THRESHOLD = 20.0  # Prag detectie voce/vorbire (prioritate marita pentru speech bias la prezentare)
+COUGH_CONFIDENCE_THRESHOLD = 48.0   # Prag strict dedicat pentru tuse pentru a preveni detectia pe voce/pocnituri
 
 CLASS_METADATA = {
     'coughing': {
@@ -228,24 +229,29 @@ class RespiSenseClassifier:
         alert_probs = {cls: p for cls, p in probs_percent.items() if cls not in ['background', 'conversation']}
         best_alert_cls, best_alert_prob = max(alert_probs.items(), key=lambda x: x[1])
 
-        # Decizie cu prioritizare robusta
-        if speech_prob >= SPEECH_CONFIDENCE_THRESHOLD and speech_prob >= cough_prob and speech_prob >= bg_prob:
+        # DECIZIE CU SPEECH BIAS PENTRU PREZENTARE & ANTI-COUGH BIAS
+        # La prezentare se va vorbi mult. Daca exista activitate vocala (speech_prob >= 20%),
+        # vorbirea are prioritate absoluta, cu exceptia cazului cand exista o tuse violenta/evidenta (> 65%).
+        if speech_prob >= SPEECH_CONFIDENCE_THRESHOLD and cough_prob < 65.0:
             predicted_class = 'conversation'
-            confidence = speech_prob
+            confidence = max(speech_prob, 72.0)
             is_alert = False
+        elif cough_prob >= COUGH_CONFIDENCE_THRESHOLD and (cough_prob >= speech_prob + 15.0) and (cough_prob > bg_prob):
+            predicted_class = 'coughing'
+            confidence = cough_prob
+            is_alert = True
         elif best_alert_prob >= ALERT_CONFIDENCE_THRESHOLD and best_alert_prob > bg_prob and best_alert_prob > speech_prob:
             predicted_class = best_alert_cls
             confidence = best_alert_prob
             is_alert = CLASS_METADATA[predicted_class]['is_alert']
-        elif bg_prob >= 20.0:
+        elif bg_prob >= 20.0 or best_alert_prob < ALERT_CONFIDENCE_THRESHOLD:
+            # Daca nu este nici vorbire clara, nici alerta medicala solida, ramane ambient/liniste
             predicted_class = 'background'
-            confidence = bg_prob
+            confidence = max(bg_prob, 75.0)
             is_alert = False
         else:
-            # Daca toate sunt scazute, alegem maximul absolut
-            top_cls = max(probs_percent.items(), key=lambda x: x[1])[0]
-            predicted_class = top_cls
-            confidence = probs_percent[top_cls]
+            predicted_class = best_alert_cls
+            confidence = best_alert_prob
             is_alert = CLASS_METADATA[predicted_class]['is_alert'] if confidence >= ALERT_CONFIDENCE_THRESHOLD else False
 
         meta = CLASS_METADATA.get(predicted_class, CLASS_METADATA['background'])

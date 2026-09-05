@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
@@ -159,7 +159,10 @@
   <div class="container">
     <header>
       <h1>🫁 NightDoc <span style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">| ONNX Runtime Model Test Console</span></h1>
-      <div class="status-badge" id="wsStatus">WebSocket: Conectat</div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <a href="/download" style="background:#0284c7; color:#fff; padding:5px 12px; border-radius:6px; font-size:0.75rem; text-decoration:none; font-weight:bold; display:flex; align-items:center; gap:6px;">📱 Descarcă APK</a>
+        <div class="status-badge" id="wsStatus">WebSocket: Conectat</div>
+      </div>
     </header>
 
     <div class="grid">
@@ -221,6 +224,16 @@
           <button class="btn-sample" onclick="testSample('sneezing')">
             <span>🤧</span>
             <div><b>Strănut</b><br><small style="color:var(--text-muted)">ESC-50 Dataset</small></div>
+          </button>
+
+          <button class="btn-sample" onclick="testSample('conversation')">
+            <span>💬</span>
+            <div><b>Conversație / Vorbire</b><br><small style="color:var(--text-muted)">Speech Dataset</small></div>
+          </button>
+
+          <button class="btn-sample" onclick="testSample('background')">
+            <span>🍃</span>
+            <div><b>Ambient / Liniște</b><br><small style="color:var(--text-muted)">Room Baseline</small></div>
           </button>
         </div>
 
@@ -349,6 +362,8 @@
       else if (type === 'snoring') simClass = 'snoring';
       else if (type === 'crying_baby') simClass = 'crying_baby';
       else if (type === 'sneezing') simClass = 'sneezing';
+      else if (type === 'conversation') simClass = 'conversation';
+      else if (type === 'background') simClass = 'background';
 
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: 'test_sound', class: simClass, angle: 0 }));
