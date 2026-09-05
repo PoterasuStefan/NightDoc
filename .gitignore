@@ -1,6 +1,7 @@
-# Secrets (Chei de API)
+﻿# Secrets (Chei de API)
 .env
 .env.local
+
 # Training Data & Audio Sets
 backend/ESC-50-master/
 backend/Additional_Manual_Training/
@@ -8,8 +9,16 @@ backend/Test(junk)/
 *.wav
 *.mp3
 *.ogg
+
 # Python cache & medii virtuale
 __pycache__/
 *.py[cod]
 venv/
 .venv/
+
+# Android Build Outputs
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+stitch_ui/

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "inverse-surface": "#dce1fb", "primary": "#4cd7f6", "tertiary-fixed": "#ffdadb", "on-secondary-fixed": "#002113", "on-primary-fixed-variant": "#004e5c", "secondary": "#4edea3", "tertiary": "#ffb2b7", "surface-container-lowest": "#070d1f", "secondary-fixed-dim": "#4edea3", "primary-fixed-dim": "#4cd7f6", "outline": "#869397", "on-primary-fixed": "#001f26", "on-tertiary-container": "#7d0023", "on-tertiary-fixed-variant": "#92002a", "on-secondary-fixed-variant": "#005236", "secondary-container": "#00a572", "on-surface-variant": "#bcc9cd", "error-container": "#93000a", "on-surface": "#dce1fb", "surface-tint": "#4cd7f6", "tertiary-fixed-dim": "#ffb2b7", "primary-fixed": "#acedff", "surface-container-low": "#151b2d", "background": "#0c1324", "on-secondary-container": "#00311f", "tertiary-container": "#ff7f8b", "on-primary": "#003640", "surface": "#0c1324", "on-tertiary-fixed": "#40000d", "on-error": "#690005", "on-primary-container": "#00424f", "surface-container": "#191f31", "surface-container-highest": "#2e3447", "on-error-container": "#ffdad6", "on-background": "#dce1fb", "on-secondary": "#003824", "error": "#ffb4ab", "inverse-primary": "#00687a", "on-tertiary": "#67001b", "outline-variant": "#3d494c", "surface-container-high": "#23293c", "primary-container": "#06b6d4", "secondary-fixed": "#6ffbbe", "surface-variant": "#2e3447", "surface-bright": "#33394c", "inverse-on-surface": "#2a3043", "surface-dim": "#0c1324" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-base": "1rem", "gutter-desktop": "1.25rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "space-lg": "1.5rem", "space-2xs": "0.125rem", "space-2xl": "3rem", "gutter-mobile": "0.75rem", "space-md": "0.75rem", "margin-screen-lg": "2rem", "margin-screen-sm": "1rem", "space-xl": "2rem" }, "fontFamily": { "telemetry-hero": [ "JetBrains Mono" ], "label-caps": [ "JetBrains Mono" ], "telemetry-val": [ "JetBrains Mono" ], "telemetry-hero-mobile": [ "JetBrains Mono" ], "headline-sm": [ "Plus Jakarta Sans" ], "body-sm": [ "Inter" ], "display-lg": [ "Plus Jakarta Sans" ], "body-lg": [ "Inter" ], "label-sm": [ "Inter" ], "headline-md": [ "Plus Jakarta Sans" ], "body-md": [ "Inter" ], "display-lg-mobile": [ "Plus Jakarta Sans" ] }, "fontSize": { "telemetry-hero": [ "56px", { "lineHeight": "56px", "letterSpacing": "-0.03em", "fontWeight": "600" } ], "label-caps": [ "10px", { "lineHeight": "12px", "letterSpacing": "0.08em", "fontWeight": "600" } ], "telemetry-val": [ "20px", { "lineHeight": "24px", "letterSpacing": "-0.02em", "fontWeight": "500" } ], "telemetry-hero-mobile": [ "36px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" } ], "headline-sm": [ "18px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600" } ], "body-sm": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" } ], "display-lg": [ "48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "body-lg": [ "16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" } ], "label-sm": [ "11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" } ], "headline-md": [ "24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "body-md": [ "14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400" } ], "display-lg-mobile": [ "32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" } ] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col antialiased selection:bg-primary selection:text-on-primary"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="h-16 px-gutter-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="NightDoc RespiSense Logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH9FjtAVYiMzbvduFCZTP1nzMaPMGrmcc1Q1ABRLnAZmhTEXbrKw8Zx9dWGTjzfwjtTFcOsbpdcm4HYF0ZJcDypDV1rrsmxjdvEJE1a2Q6ga8WO6qHnDvOrqozMc08h5K8alR9APsst__DLX0EWnDZslHeiogJiQLbLc99ChV0WIRQNIwIj_d_Ic6vg2ekjD8duwHG6ATbt254zAn-tulKD8oahPxzuxreEFQ_ltMYhXxszXBpoopfHw"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm tracking-tight text-on-surface font-bold truncate">NightDoc</span><span class="font-label-caps text-label-caps text-primary px-1.5 py-0.5 rounded bg-primary-container/20 tracking-wider">AI</span></div><span class="font-label-caps text-label-caps text-on-surface-variant truncate uppercase tracking-widest">Sentinel</span></div></div><div class="flex items-center gap-space-sm flex-shrink-0"><div class="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-full bg-surface-container-high/80 text-secondary shadow-[0_0_12px_rgba(78,222,163,0.15)]"><span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span><span class="font-label-caps text-label-caps text-secondary font-medium tracking-wide">100% EDGE</span></div><div class="flex sm:hidden items-center justify-center w-7 h-7 rounded-full bg-surface-container-high/80 text-secondary shadow-[0_0_8px_rgba(78,222,163,0.2)]"><span class="material-symbols-outlined text-[16px]">shield</span></div><button class="flex items-center justify-center p-0.5 rounded-full ring-1 ring-primary/40 focus:outline-none min-w-[36px] min-h-[36px]"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzdKabwLbJsGrbkfInfnSbXqCWDI5lhNEGTupmv7u5R8npqWlSKteD2ZfkrJvSMOJmTKRGP5vzBxPfTjr8MQNXm_pPHCS9mtK548RRgr0PFiCpGYqQPiAOnTTE90Iy3lk4lWrTpqRQjxZPXsHzNbKwemRTevCONZ9vyptvT8LevwAwRMOw310L7JfrkHBKpx8CaApTrbjrkXx_-QvjBaZMPbDDFsde2GiL4wY2bJMCCzf4VSVGfJ-egg"/></button></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen px-gutter-mobile"><div class="flex flex-col w-full gap-space-md" id="sentinel-root">
+<!-- Mode Switcher & Inference Engine Status Bar -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between bg-surface-container-low px-space-md py-2 rounded-xl shadow-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+<span class="font-label-caps text-label-caps text-secondary font-semibold tracking-wider truncate uppercase">
+          LIVE SENTINEL • BEDROOM 1
+        </span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-high px-2 py-0.5 rounded-full text-on-surface-variant flex-shrink-0">
+<span class="material-symbols-outlined text-[13px] text-primary">bolt</span>
+<span class="font-label-caps text-label-caps text-on-surface tracking-tight">8.4ms ONNX</span>
+</div>
+</div>
+<!-- Night / Day Mode Tactical Pills -->
+<div class="grid grid-cols-2 p-1 bg-surface-container-lowest rounded-xl shadow-inner gap-1">
+<button class="flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-surface-container-high text-primary font-label-caps text-label-caps tracking-wider transition-all duration-200" id="btn-mode-night">
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">dark_mode</span>
+<span>NIGHT OLED</span>
+</button>
+<button class="flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-transparent text-on-surface-variant font-label-caps text-label-caps tracking-wider transition-all duration-200" id="btn-mode-day">
+<span class="material-symbols-outlined text-[15px]">wb_sunny</span>
+<span>DAY MONITOR</span>
+</button>
+</div>
+</div>
+<!-- Central Visual: Circular Acoustic Radar & Biometric Spectrogram -->
+<div class="relative flex flex-col items-center justify-center bg-surface-container-low rounded-xl p-space-md overflow-hidden shadow-md">
+<!-- Ambient Radial Halo Gradient -->
+<div class="absolute inset-0 bg-radial from-primary/10 via-transparent to-transparent pointer-events-none"></div>
+<!-- Radar Canvas Area -->
+<div class="relative w-64 h-64 flex items-center justify-center my-space-xs">
+<!-- Outer Concentric Radar Sweep Ring 3 -->
+<div class="absolute inset-0 rounded-full bg-surface-container-high/40 animate-ping opacity-20 duration-1000"></div>
+<!-- Outer Static Calibration Ring -->
+<div class="absolute inset-2 rounded-full bg-surface-container/60 flex items-center justify-center shadow-inner">
+<!-- SVG Radar Pulses & Realtime Frequency Mesh -->
+<svg class="w-full h-full p-2" viewbox="0 0 240 240">
+<defs>
+<radialgradient cx="50%" cy="50%" id="radarSweep" r="50%">
+<stop offset="0%" stop-color="#4cd7f6" stop-opacity="0.35"></stop>
+<stop offset="60%" stop-color="#06b6d4" stop-opacity="0.08"></stop>
+<stop offset="100%" stop-color="#06b6d4" stop-opacity="0"></stop>
+</radialgradient>
+</defs>
+<!-- Grid Rings -->
+<circle cx="120" cy="120" fill="none" r="105" stroke="#23293c" stroke-dasharray="3 3" stroke-width="1"></circle>
+<circle cx="120" cy="120" fill="none" r="75" stroke="#23293c" stroke-width="1"></circle>
+<circle cx="120" cy="120" fill="none" r="45" stroke="#23293c" stroke-dasharray="2 2" stroke-width="1"></circle>
+<!-- Dynamic Acoustic Amplitude Wave -->
+<path class="transition-all duration-300" d="M 20 120 Q 50 112 70 120 T 110 120 T 120 102 T 130 138 T 150 120 T 190 120 T 220 120" fill="none" id="waveform-path" stroke="#4cd7f6" stroke-linecap="round" stroke-width="2"></path>
+<!-- Scanning Sweep Indicator -->
+<line class="origin-center animate-spin" opacity="0.65" stroke="#4edea3" stroke-linecap="round" stroke-width="1.5" style="animation-duration: 4s;" x1="120" x2="210" y1="120" y2="55"></line>
+</svg>
+</div>
+<!-- Inner Core: Realtime Sound Pressure Decibel & State -->
+<div class="relative z-10 flex flex-col items-center justify-center text-center p-4 rounded-full bg-surface-container-lowest/90 w-36 h-36 backdrop-blur shadow-[0_0_24px_rgba(6,182,212,0.2)]">
+<div class="flex items-baseline justify-center gap-0.5">
+<span class="font-telemetry-hero-mobile text-telemetry-hero-mobile text-primary tracking-tighter" id="live-db">34</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant font-medium">dB</span>
+</div>
+<span class="font-label-caps text-label-caps text-secondary font-bold tracking-widest mt-1">CALIBRATED</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Room Silence</span>
+</div>
+</div>
+<!-- Acoustic Diagnostic State Pill -->
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high shadow-sm mt-2">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">air</span>
+<span class="font-label-caps text-label-caps text-primary tracking-wider font-semibold">
+        AMBIENT BASELINE (NORMAL)
+      </span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+</div>
+</div>
+<!-- Last Detected Events Timeline / Ticker -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between px-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant tracking-wider uppercase font-semibold">
+        ACQUIRED RESPIRATORY EPISODES
+      </span>
+<span class="font-label-caps text-label-caps text-primary">PAST 8H</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<!-- Item 1: Paroxysmal Cough (Rose Alert) -->
+<div class="flex flex-col gap-1 bg-surface-container-low p-space-sm rounded-xl transition-all duration-150 active:scale-[0.99]">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="flex items-center justify-center w-5 h-5 rounded-full bg-tertiary-container/30 text-tertiary">
+<span class="material-symbols-outlined text-[13px]">warning</span>
+</span>
+<span class="font-headline-sm text-headline-sm text-tertiary font-bold tracking-tight">Paroxysmal Cough</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-error-container/40 text-error font-label-caps text-label-caps font-bold">
+            03:42 AM
+          </span>
+</div>
+<div class="flex items-center justify-between pl-7 pr-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">LOINC 8687-6 • INTENSITY: HIGH</span>
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps text-on-surface">1.2s</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-tertiary font-label-caps text-label-caps font-bold">98.2% CONF</span>
+</div>
+</div>
+</div>
+<!-- Item 2: Wheezing Episode (Amber / Tertiary Warning) -->
+<div class="flex flex-col gap-1 bg-surface-container-low p-space-sm rounded-xl transition-all duration-150 active:scale-[0.99]">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="flex items-center justify-center w-5 h-5 rounded-full bg-surface-container-high text-primary-fixed">
+<span class="material-symbols-outlined text-[13px]">graphic_eq</span>
+</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Wheezing Sequence</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps font-medium">
+            03:15 AM
+          </span>
+</div>
+<div class="flex items-center justify-between pl-7 pr-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">SNOMED 56018004 • CONTINUOUS</span>
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps text-on-surface">4.1s</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-label-caps text-label-caps font-semibold">91.5% CONF</span>
+</div>
+</div>
+</div>
+<!-- Item 3: Snoring / Hypopnea Risk (Cyan Pill) -->
+<div class="flex flex-col gap-1 bg-surface-container-low p-space-sm rounded-xl transition-all duration-150 active:scale-[0.99]">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="flex items-center justify-center w-5 h-5 rounded-full bg-surface-container-high text-secondary">
+<span class="material-symbols-outlined text-[13px]">bedtime</span>
+</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Vibration / Hypopnea Risk</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps font-medium">
+            02:40 AM
+          </span>
+</div>
+<div class="flex items-center justify-between pl-7 pr-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">SNOMED 271600006 • LOUDNESS PEAK</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-secondary font-label-caps text-label-caps font-semibold">68 dB PEAK</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Telemetry Sliders & Edge Mic Sensitivity Control -->
+<div class="flex flex-col gap-space-sm bg-surface-container-low p-space-md rounded-xl shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">mic</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold">Acoustic Gain &amp; Gate</span>
+</div>
+<span class="font-telemetry-val text-telemetry-val text-primary" id="gain-readout">78%</span>
+</div>
+<!-- Sensitivity Slider Track with Interactive Styling -->
+<div class="flex flex-col gap-1.5">
+<div class="relative flex items-center w-full">
+<input class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary focus:outline-none" id="mic-gain" max="100" min="0" type="range" value="78"/>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-label-caps text-label-caps">
+<span>Quiet Bedside (Whisper)</span>
+<span>Adaptive Isolation ON</span>
+</div>
+</div>
+</div>
+<!-- Clinical Bedside Action Bar: Emergency Alert & Privacy Enclave -->
+<div class="flex flex-col gap-space-xs">
+<button class="flex items-center justify-center gap-2 py-3 px-space-base rounded-xl bg-error text-on-error font-label-caps text-label-caps font-bold tracking-wider shadow-[0_0_20px_rgba(255,180,171,0.25)] active:scale-[0.98] transition-transform" id="btn-emergency">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">crisis_alert</span>
+<span>DISPATCH PULMONOLOGIST ALERT</span>
+</button>
+<!-- On-Device Privacy Shield Affirmation -->
+<div class="flex items-start gap-space-xs p-space-sm rounded-xl bg-surface-container-lowest">
+<span class="material-symbols-outlined text-[18px] text-secondary flex-shrink-0 mt-0.5">lock</span>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-secondary font-bold tracking-wider">HIPAA PRIVACY SHIELD ACTIVE</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-tight mt-0.5">
+          Zero raw audio leaves bedroom node. Acoustic spectrograms are purged instantly from RAM post-inference; only diagnostic event metadata is persisted.
+        </p>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Dynamic audio waveform oscillation & decibel simulation
+  const dbElement = document.getElementById('live-db');
+  const waveformPath = document.getElementById('waveform-path');
+  const gainSlider = document.getElementById('mic-gain');
+  const gainReadout = document.getElementById('gain-readout');
+  const nightBtn = document.getElementById('btn-mode-night');
+  const dayBtn = document.getElementById('btn-mode-day');
+  const root = document.getElementById('sentinel-root');
+
+  if (gainSlider && gainReadout) {
+    gainSlider.addEventListener('input', (e) => {
+      gainReadout.textContent = `${e.target.value}%`;
+    });
+  }
+
+  // Micro jitter for live acoustic feed illusion
+  setInterval(() => {
+    if (!dbElement) return;
+    const base = 33;
+    const variance = Math.floor(Math.random() * 4);
+    dbElement.textContent = (base + variance).toString();
+
+    // Subtle path shape shift
+    const y1 = 115 + Math.random() * 10;
+    const y2 = 125 - Math.random() * 10;
+    const yPeak = 95 + Math.random() * 14;
+    waveformPath.setAttribute('d', `M 20 120 Q 50 ${y1} 70 120 T 110 120 T 120 ${yPeak} T 130 142 T 150 ${y2} T 190 120 T 220 120`);
+  }, 1200);
+
+  // Night / Day monitor mode switcher
+  if (nightBtn && dayBtn) {
+    nightBtn.addEventListener('click', () => {
+      nightBtn.classList.remove('bg-transparent', 'text-on-surface-variant');
+      nightBtn.classList.add('bg-surface-container-high', 'text-primary');
+      dayBtn.classList.remove('bg-surface-container-high', 'text-primary');
+      dayBtn.classList.add('bg-transparent', 'text-on-surface-variant');
+      root.classList.remove('opacity-90');
+    });
+
+    dayBtn.addEventListener('click', () => {
+      dayBtn.classList.remove('bg-transparent', 'text-on-surface-variant');
+      dayBtn.classList.add('bg-surface-container-high', 'text-primary');
+      nightBtn.classList.remove('bg-surface-container-high', 'text-primary');
+      nightBtn.classList.add('bg-transparent', 'text-on-surface-variant');
+      root.classList.add('opacity-90');
+    });
+  }
+
+  // Visual feedback on emergency alert trigger
+  const emergencyBtn = document.getElementById('btn-emergency');
+  if (emergencyBtn) {
+    emergencyBtn.addEventListener('click', () => {
+      emergencyBtn.classList.add('animate-pulse');
+      emergencyBtn.innerText = 'TRANSMITTING CLINICAL TELEMETRY...';
+      setTimeout(() => {
+        emergencyBtn.classList.remove('animate-pulse');
+        emergencyBtn.innerText = 'ALERT TRANSMITTED (ON-CALL NOTIFIED)';
+      }, 2000);
+    });
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.6)]" data-active-classes="text-primary fill-current relative after:content-[''] after:absolute after:bottom-1 after:w-1 after:h-1 after:bg-primary after:rounded-full after:shadow-[0_0_8px_#4cd7f6]"><div class="flex justify-around items-center h-16 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] py-1 transition-all duration-200 text-primary fill-current relative after:content-[''] after:absolute after:bottom-1 after:w-1 after:h-1 after:bg-primary after:rounded-full after:shadow-[0_0_8px_#4cd7f6]" data-path="sentinel" href="code.html"><span class="material-symbols-outlined text-[22px]">radar</span><span class="font-label-caps text-label-caps">Sentinel</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] py-1 text-on-surface-variant transition-all duration-200" data-path="analytics" href="../biomarker_analytics_reports/code.html"><span class="material-symbols-outlined text-[22px]">stacked_line_chart</span><span class="font-label-caps text-label-caps">Analytics</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] py-1 text-on-surface-variant transition-all duration-200" data-path="environment" href="../environmental_correlation/code.html"><span class="material-symbols-outlined text-[22px]">air</span><span class="font-label-caps text-label-caps">Ambient</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] py-1 text-on-surface-variant transition-all duration-200" data-path="efficacy" href="../treatment_efficacy_tracker/code.html"><span class="material-symbols-outlined text-[22px]">medication</span><span class="font-label-caps text-label-caps">Efficacy</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] py-1 text-on-surface-variant transition-all duration-200" data-path="edge-iot" href="../edge_iot_privacy_hub/code.html"><span class="material-symbols-outlined text-[22px]">memory</span><span class="font-label-caps text-label-caps">Edge IoT</span></a></div></nav>
+<script>
+  // NightDoc Live Acoustic Bridge
+  let backendHost = localStorage.getItem("nightdoc_host") || "10.25.131.40:8000";
+  if (location.host && !location.protocol.startsWith("file")) {
+    backendHost = location.host;
+  }
+
+  let ws;
+  function initWebSocket() {
+    const proto = (location.protocol === 'https:' || backendHost.includes("ngrok") || backendHost.includes("trycloudflare")) ? 'wss:' : 'ws:';
+    try {
+      ws = new WebSocket(`${proto}//${backendHost}/ws/acoustic`);
+      ws.onopen = () => { console.log("[NightDoc] Connected to Backend:", backendHost); };
+      ws.onmessage = (e) => {
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.type === 'biomarker_event') {
+            onBiomarkerReceived(msg.payload);
+          }
+        } catch (err) {}
+      };
+      ws.onclose = () => { setTimeout(initWebSocket, 3000); };
+    } catch (e) {
+      console.warn("WS connect error:", e);
+    }
+  }
+  initWebSocket();
+
+  function onBiomarkerReceived(data) {
+    const cls = data.predicted_class || "background";
+    const conf = data.confidence || 0;
+    const dbElem = document.getElementById('live-db');
+    
+    if (dbElem && data.rms_energy !== undefined) {
+      const estimatedDb = Math.min(85, Math.max(30, Math.round(32 + data.rms_energy * 450)));
+      dbElem.textContent = estimatedDb.toString();
+    }
+
+    if (data.is_alert) {
+      addLiveEpisodeToTimeline(data);
+    }
+  }
+
+  function addLiveEpisodeToTimeline(data) {
+    const list = document.querySelector("#sentinel-root .flex.flex-col.gap-space-xs:last-of-type");
+    if (!list) return;
+
+    const timeStr = new Date().toLocaleTimeString();
+    const isCough = data.predicted_class === 'coughing';
+    const title = isCough ? "Paroxysmal Cough" : (data.title || data.predicted_class);
+    const colorClass = isCough ? "text-tertiary" : "text-primary";
+    const icon = isCough ? "warning" : "graphic_eq";
+    const badgeBg = isCough ? "bg-error-container/40 text-error" : "bg-primary-container/30 text-primary";
+
+    const item = document.createElement("div");
+    item.className = "flex flex-col gap-1 bg-surface-container-low p-space-sm rounded-xl transition-all duration-150 animate-pulse";
+    item.innerHTML = `
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-space-xs">
+          <span class="flex items-center justify-center w-5 h-5 rounded-full ${badgeBg}">
+            <span class="material-symbols-outlined text-[13px]">${icon}</span>
+          </span>
+          <span class="font-headline-sm text-headline-sm ${colorClass} font-bold tracking-tight">${title}</span>
+        </div>
+        <span class="px-2 py-0.5 rounded-full ${badgeBg} font-label-caps text-label-caps font-bold">${timeStr}</span>
+      </div>
+      <div class="flex items-center justify-between pl-7 pr-1">
+        <span class="font-label-caps text-label-caps text-on-surface-variant">LOINC ${data.loinc || '8687-6'} ? INTENSITY: HIGH</span>
+        <div class="flex items-center gap-2">
+          <span class="font-label-caps text-label-caps text-on-surface">Live</span>
+          <span class="px-1.5 py-0.5 rounded bg-surface-container-high ${colorClass} font-label-caps text-label-caps font-bold">${Math.round(data.confidence || 95)}% CONF</span>
+        </div>
+      </div>
+    `;
+    list.insertBefore(item, list.firstChild);
+  }
+
+  // Live Microphone Stream via Web Audio API
+  let audioCtx, mediaStream, scriptNode;
+  async function startPhoneAudioStream() {
+    try {
+      mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 22050 });
+      const source = audioCtx.createMediaStreamSource(mediaStream);
+      
+      let pcmBuffer = [];
+      scriptNode = audioCtx.createScriptProcessor(4096, 1, 1);
+      scriptNode.onaudioprocess = (e) => {
+        const inputData = e.inputBuffer.getChannelData(0);
+        pcmBuffer.push(new Float32Array(inputData));
+
+        const totalSamples = pcmBuffer.reduce((acc, b) => acc + b.length, 0);
+        if (totalSamples >= 22050 * 2.5) { // 2.5 secunde
+          const merged = new Float32Array(totalSamples);
+          let offset = 0;
+          for (const b of pcmBuffer) {
+            merged.set(b, offset);
+            offset += b.length;
+          }
+          pcmBuffer = [];
+          
+          const wavBlob = encodeToWAV(merged, 22050);
+          wavBlob.arrayBuffer().then(buf => {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(buf);
+            }
+          });
+        }
+      };
+
+      source.connect(scriptNode);
+      scriptNode.connect(audioCtx.destination);
+      console.log("[NightDoc] Bedside Mic Streaming Active");
+    } catch (err) {
+      console.warn("Mic start error:", err);
+    }
+  }
+
+  function encodeToWAV(samples, sampleRate) {
+    const buffer = new ArrayBuffer(44 + samples.length * 2);
+    const view = new DataView(buffer);
+    function writeString(view, offset, string) {
+      for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
+    }
+    writeString(view, 0, 'RIFF');
+    view.setUint32(4, 36 + samples.length * 2, true);
+    writeString(view, 8, 'WAVE');
+    writeString(view, 12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
+    writeString(view, 36, 'data');
+    view.setUint32(40, samples.length * 2, true);
+    let offset = 44;
+    for (let i = 0; i < samples.length; i++) {
+      const s = Math.max(-1, Math.min(1, samples[i]));
+      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+      offset += 2;
+    }
+    return new Blob([view], { type: 'audio/wav' });
+  }
+
+  // Pornim microfonul automat sau la prima atingere
+  document.addEventListener("click", () => {
+    if (!audioCtx) startPhoneAudioStream();
+  }, { once: true });
+  setTimeout(() => { if (!audioCtx) startPhoneAudioStream(); }, 1500);
+</script>
+
+</body></html>

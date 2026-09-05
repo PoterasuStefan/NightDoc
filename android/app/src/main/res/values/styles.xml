@@ -1,0 +1,11 @@
+﻿<resources>
+    <style name="Theme.NightDoc" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#0c1324</item>
+        <item name="android:statusBarColor">#0c1324</item>
+        <item name="android:navigationBarColor">#0c1324</item>
+    </style>
+    <style name="Theme.NightDoc.Fullscreen" parent="Theme.NightDoc">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+</resources>

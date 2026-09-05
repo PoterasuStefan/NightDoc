@@ -315,6 +315,14 @@ async def serve_test_ui():
         return FileResponse(test_path)
     return JSONResponse(status_code=404, content={"error": "test.html not found"})
 
+
+@app.get("/download-apk")
+async def download_apk():
+    apk_path = os.path.join(ROOT_DIR, "NightDoc-Bedside-Sentinel.apk")
+    if os.path.exists(apk_path):
+        return FileResponse(apk_path, media_type="application/vnd.android.package-archive", filename="NightDoc-Bedside-Sentinel.apk")
+    return JSONResponse(status_code=404, content={"error": "APK file not found"})
+
 if os.path.exists(os.path.join(ROOT_DIR, "index.html")):
     @app.get("/")
     async def serve_index():
