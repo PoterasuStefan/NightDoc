@@ -113,7 +113,7 @@
           <span class="w-2 h-2 rounded-full bg-[#4ECCA3] animate-pulse" id="mic-pulse"></span>
           <span class="font-label-caps text-[9px] font-bold tracking-wide" id="mic-label">MIC LIVE</span>
         </button>
-        <div class="w-8 h-8 rounded-full overflow-hidden border border-[#d4af37]/40 shadow-sm">
+        <div class="w-8 h-8 rounded-full overflow-hidden border border-[#d4af37]/40 shadow-sm cursor-pointer hover:border-primary transition-all" onclick="alert('Dr. Sarah Anderson\nPulmonology Dept.\n\nProfile settings & Logout coming soon.')">
           <img alt="Dr. Sarah Anderson" class="w-full h-full object-cover" src="professional_medical_doctor_or_pulmonologist_specialist_headshot_in_a_modern/screen.png"/>
         </div>
       </div>
@@ -1461,7 +1461,7 @@
 
     <!-- VIEW 4: EFFICACY -->
     <section id="view-efficacy" class="hidden w-full flex-col gap-4">
-      <div class="flex flex-col w-full gap-space-lg max-w-md mx-auto"><div class="flex items-center justify-between gap-space-sm pt-3"><div class="flex flex-col min-w-0"><span class="font-label-caps text-label-caps text-gold-dim/90 uppercase tracking-[0.14em]">Treatment Telemetry</span><h1 class="font-headline-md text-headline-md text-text-primary font-bold tracking-tight truncate">Treatment Efficacy</h1></div><button class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-primary-container via-[#E2C974] to-[#cba33d] text-obsidian-base font-label-caps text-label-caps font-bold tracking-wider shadow-[0_2px_16px_rgba(212,175,55,0.35)] border border-white/20 active:scale-95 transition-all" id="open-log-modal"><span class="material-symbols-outlined text-[16px] stroke-[2.5]">add</span><span>LOG MEDICATION</span></button></div><div class="flex flex-col p-space-md rounded-xl bg-sapphire-surface/75 border border-gold-dim/20 shadow-[0_4px_24px_rgba(0,0,0,0.35)] backdrop-blur-md relative overflow-hidden"><div class="absolute -right-8 -top-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none"></div><div class="flex items-center justify-between gap-space-xs mb-2.5"><div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-celadon-mint/10 border border-celadon-mint/30 text-celadon-mint"><span class="w-1.5 h-1.5 rounded-full bg-celadon-mint animate-pulse"></span><span class="font-label-caps text-[9px] tracking-wider font-semibold uppercase">Current Regimen</span></div><span class="font-label-caps text-label-caps text-text-secondary font-medium tracking-wide">DOSE AT 22:30</span></div><div class="flex items-center justify-between mt-1"><div class="flex flex-col min-w-0 pr-2"><h2 class="font-headline-sm text-[17px] text-text-primary font-semibold tracking-tight truncate">Fluticasone / Salmeterol</h2><span class="font-body-sm text-body-sm text-text-secondary mt-0.5">100/50 mcg • Dry Powder Inhaler (ICS + LABA)</span></div><div class="w-10 h-10 rounded-lg bg-surface-container-high/70 border border-gold-dim/25 flex items-center justify-center text-text-gold shrink-0 shadow-inner"><span class="material-symbols-outlined text-[20px]">medication</span></div></div></div><div class="flex items-center justify-between p-space-md rounded-xl bg-sapphire-surface/75 border border-celadon-mint/20 shadow-[0_4px_20px_rgba(0,0,0,0.35)] backdrop-blur-md relative overflow-hidden"><div class="absolute -left-10 -bottom-10 w-28 h-28 bg-celadon-mint/5 rounded-full blur-2xl pointer-events-none"></div><div class="flex items-center gap-3 min-w-0"><div class="w-11 h-11 rounded-xl bg-celadon-mint/10 border border-celadon-mint/30 flex items-center justify-center text-celadon-mint shrink-0 shadow-[0_0_16px_rgba(78,204,163,0.18)]"><span class="material-symbols-outlined text-[24px]">trending_down</span></div><div class="flex flex-col min-w-0"><span class="font-label-caps text-[10px] text-celadon-mint font-semibold tracking-wider uppercase">Overall Efficacy</span><span class="font-body-sm text-body-sm text-text-primary font-medium truncate">Reduction in nocturnal cough spasms</span></div></div><div class="flex flex-col items-end shrink-0 pl-2"><span class="font-telemetry-hero-mobile text-telemetry-hero-mobile text-celadon-mint font-bold tabular-nums leading-none tracking-tight">-79%</span><span class="font-label-caps text-[9px] text-celadon-mint/90 font-semibold tracking-wider mt-1 px-1.5 py-0.5 rounded bg-celadon-mint/10 border border-celadon-mint/20">CONFIRMED</span></div></div><div class="flex flex-col p-space-md rounded-xl bg-sapphire-surface/75 border border-gold-dim/15 gap-space-sm shadow-[0_4px_20px_rgba(0,0,0,0.35)] backdrop-blur-md"><div class="flex items-center justify-between"><span class="font-label-caps text-label-caps text-text-secondary uppercase tracking-widest">Pre-Dose vs. Post-Dose Window</span><span class="font-label-caps text-[10px] text-text-gold font-semibold tracking-wider px-2 py-0.5 rounded bg-primary/10 border border-primary/20">6H OBSERVATION</span></div><div class="grid grid-cols-2 gap-space-sm"><div class="flex flex-col p-3 rounded-lg bg-surface-container-low/90 border border-clinical-alert/20"><div class="flex items-center justify-between mb-1"><span class="font-label-caps text-[9px] text-clinical-alert uppercase font-semibold tracking-wider">Pre-Dose (-2h)</span><span class="w-1.5 h-1.5 rounded-full bg-clinical-alert shadow-[0_0_6px_#FF6B81]"></span></div><span class="font-body-sm text-body-sm text-text-secondary">20:30 – 22:30</span><div class="mt-2.5 flex items-baseline gap-1"><span class="font-telemetry-val text-telemetry-val font-semibold text-clinical-alert tabular-nums">19</span><span class="font-label-caps text-[10px] text-text-secondary">events/h</span></div><span class="font-label-caps text-[9px] text-clinical-alert font-semibold mt-1 tracking-wide">SEVERE (74 dB)</span></div><div class="flex flex-col p-3 rounded-lg bg-surface-container-low/90 border border-celadon-mint/20"><div class="flex items-center justify-between mb-1"><span class="font-label-caps text-[9px] text-celadon-mint uppercase font-semibold tracking-wider">Post-Dose (+4h)</span><span class="w-1.5 h-1.5 rounded-full bg-celadon-mint shadow-[0_0_6px_#4ECCA3]"></span></div><span class="font-body-sm text-body-sm text-text-secondary">22:30 – 04:30</span><div class="mt-2.5 flex items-baseline gap-1"><span class="font-telemetry-val text-telemetry-val font-semibold text-celadon-mint tabular-nums">04</span><span class="font-label-caps text-[10px] text-text-secondary">events/h</span></div><span class="font-label-caps text-[9px] text-celadon-mint font-semibold mt-1 tracking-wide">MILD (38 dB)</span></div></div></div><div class="flex flex-col p-space-md rounded-xl bg-sapphire-surface/75 border border-gold-dim/15 gap-space-sm shadow-[0_4px_20px_rgba(0,0,0,0.35)] backdrop-blur-md"><div class="flex items-center justify-between"><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-text-gold text-[16px]">show_chart</span><span class="font-label-caps text-[10px] text-text-primary uppercase tracking-wider font-semibold">Acoustic Response Trajectory</span></div><div class="flex items-center gap-2.5"><span class="flex items-center gap-1 font-label-caps text-[9px] text-clinical-alert font-medium"><span class="w-1.5 h-1.5 rounded-full bg-clinical-alert"></span>Spasms</span><span class="flex items-center gap-1 font-label-caps text-[9px] text-celadon-mint font-medium"><span class="w-1.5 h-1.5 rounded-full bg-celadon-mint"></span>Attenuated</span></div></div><div class="relative w-full h-28 bg-obsidian-base/90 border border-surface-container-highest/60 rounded-lg overflow-hidden p-2"><svg class="w-full h-full" fill="none" preserveaspectratio="none" viewbox="0 0 340 100"><defs><lineargradient id="preGradClean" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#FF6B81" stop-opacity="0.32"></stop><stop offset="100%" stop-color="#FF6B81" stop-opacity="0.0"></stop></lineargradient><lineargradient id="postGradClean" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#4ECCA3" stop-opacity="0.3"></stop><stop offset="100%" stop-color="#4ECCA3" stop-opacity="0.0"></stop></lineargradient><filter id="glowGold"><fegaussianblur result="coloredBlur" stddeviation="1.5"></fegaussianblur><femerge><femergenode in="coloredBlur"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter></defs><line stroke="#1c253b" stroke-dasharray="2 4" stroke-width="1" x1="0" x2="340" y1="30" y2="30"></line><line stroke="#1c253b" stroke-dasharray="2 4" stroke-width="1" x1="0" x2="340" y1="65" y2="65"></line><line stroke="#D4AF37" stroke-dasharray="3 3" stroke-width="1.5" x1="136" x2="136" y1="0" y2="100"></line><circle cx="136" cy="15" fill="#f2ca50" filter="url(#glowGold)" r="3"></circle><path d="M 0,78 L 15,74 L 25,28 L 32,82 L 45,70 L 52,18 L 60,65 L 75,76 L 85,22 L 95,84 L 110,60 L 120,15 L 128,70 L 136,55" stroke="#FF6B81" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M 0,78 L 15,74 L 25,28 L 32,82 L 45,70 L 52,18 L 60,65 L 75,76 L 85,22 L 95,84 L 110,60 L 120,15 L 128,70 L 136,55 L 136,95 L 0,95 Z" fill="url(#preGradClean)"></path><path d="M 136,55 L 150,68 L 165,72 L 180,58 L 195,78 L 210,75 L 225,82 L 240,80 L 255,84 L 270,82 L 285,65 L 295,82 L 315,84 L 340,85" stroke="#4ECCA3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M 136,55 L 150,68 L 165,72 L 180,58 L 195,78 L 210,75 L 225,82 L 240,80 L 255,84 L 270,82 L 285,65 L 295,82 L 315,84 L 340,85 L 340,95 L 136,95 Z" fill="url(#postGradClean)"></path></svg><div class="absolute top-2 left-[142px] px-1.5 py-0.5 rounded bg-primary/15 border border-primary/30 text-text-gold font-label-caps text-[9px] font-semibold tracking-wider">DOSE TAKEN</div></div><div class="flex justify-between items-center text-text-secondary/70 font-label-caps text-[10px] px-1"><span>20:30</span><span>21:30</span><span class="text-text-gold font-semibold">22:30</span><span>00:30</span><span>02:30</span><span>04:30</span></div></div><div class="flex items-start gap-space-sm p-space-md rounded-xl bg-sapphire-surface/85 border-l-2 border-l-primary border-y border-r border-gold-dim/15 shadow-[0_4px_20px_rgba(0,0,0,0.35)]"><div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/25 text-text-gold flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[18px]">stethoscope</span></div><div class="flex flex-col min-w-0"><span class="font-label-caps text-[10px] text-text-gold font-semibold uppercase tracking-wider">Clinical Directive</span><p class="font-body-sm text-body-sm text-on-surface mt-1 leading-relaxed">Bronchodilator response confirms reversible airway hyperreactivity. Nocturnal cough spasms suppressed by 79% within 42 minutes.</p></div></div></div><div class="fixed inset-0 z-50 bg-obsidian-base/80 backdrop-blur-md flex items-end justify-center hidden opacity-0 transition-opacity duration-200" id="log-modal"><div class="flex flex-col w-full max-w-md bg-sapphire-surface border-t border-x border-gold-dim/30 rounded-t-2xl p-space-lg gap-space-md shadow-[0_-8px_32px_rgba(0,0,0,0.7)] transform translate-y-full transition-transform duration-200" id="modal-container"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-text-gold">medication</span><span class="font-headline-sm text-headline-sm font-semibold text-text-primary">Log Medication Dose</span></div><button class="p-1 rounded-full bg-surface-container-high text-text-secondary hover:text-text-primary" id="close-log-modal"><span class="material-symbols-outlined text-[20px]">close</span></button></div><div class="flex flex-col gap-1.5"><span class="font-label-caps text-label-caps text-gold-dim uppercase tracking-wider">Classification</span><div class="grid grid-cols-2 gap-2" id="type-selector"><button class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-gradient-to-r from-primary-container to-[#cba33d] text-obsidian-base font-label-caps text-label-caps font-bold shadow-[0_2px_10px_rgba(212,175,55,0.3)]"><span class="material-symbols-outlined text-[16px]">air</span> Inhaler</button><button class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-surface-container-low border border-gold-dim/15 text-text-primary font-label-caps text-label-caps"><span class="material-symbols-outlined text-[16px]">pulmonology</span> Bronchodilator</button><button class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-surface-container-low border border-gold-dim/15 text-text-primary font-label-caps text-label-caps"><span class="material-symbols-outlined text-[16px]">medication_liquid</span> Suppressant</button><button class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-surface-container-low border border-gold-dim/15 text-text-primary font-label-caps text-label-caps"><span class="material-symbols-outlined text-[16px]">grain</span> Nebulizer</button></div></div><div class="flex flex-col gap-1.5"><span class="font-label-caps text-label-caps text-gold-dim uppercase tracking-wider">Dosage &amp; Compound</span><input class="w-full bg-surface-container-low text-text-primary px-3 py-2.5 rounded-lg border border-gold-dim/20 font-body-sm text-body-sm outline-none focus:border-primary focus:bg-surface-container" type="text" value="Fluticasone / Salmeterol (100/50 mcg)"/></div><div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low border border-gold-dim/15"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-text-gold text-[18px]">schedule</span><span class="font-body-sm text-body-sm text-text-primary">Administration Time</span></div><span class="font-label-caps text-label-caps text-text-gold bg-primary/15 border border-primary/25 px-2 py-1 rounded font-semibold">NOW</span></div><button class="w-full py-3 rounded-xl bg-gradient-to-r from-primary-container via-[#E2C974] to-[#cba33d] text-obsidian-base font-headline-sm text-[16px] font-bold tracking-wide shadow-[0_0_24px_rgba(212,175,55,0.35)] border border-white/20 active:scale-[0.98] transition-transform" id="submit-log">Confirm &amp; Record Dose</button></div></div>
+      <div class="flex flex-col w-full gap-space-lg max-w-md mx-auto"><div class="flex items-center justify-between gap-space-sm pt-3"><div class="flex flex-col min-w-0"><span class="font-label-caps text-label-caps text-gold-dim/90 uppercase tracking-[0.14em]">Treatment Telemetry</span><h1 class="font-headline-md text-headline-md text-text-primary font-bold tracking-tight truncate">Treatment Efficacy</h1></div><button class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-primary-container via-[#E2C974] to-[#cba33d] text-obsidian-base font-label-caps text-label-caps font-bold tracking-wider shadow-[0_2px_16px_rgba(212,175,55,0.35)] border border-white/20 active:scale-95 transition-all" id="open-log-modal"><span class="material-symbols-outlined text-[16px] stroke-[2.5]">add</span><span>LOG MEDICATION</span></button></div><div class="flex flex-col p-space-md rounded-xl bg-sapphire-surface/75 border border-gold-dim/20 shadow-[0_4px_24px_rgba(0,0,0,0.35)] backdrop-blur-md relative overflow-hidden"><div class="absolute -right-8 -top-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none"></div><div class="flex items-center justify-between gap-space-xs mb-2.5"><div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-celadon-mint/10 border border-celadon-mint/30 text-celadon-mint"><span class="w-1.5 h-1.5 rounded-full bg-celadon-mint animate-pulse"></span><span class="font-label-caps text-[9px] tracking-wider font-semibold uppercase">Current Regimen</span></div><span class="font-label-caps text-label-caps text-text-secondary font-medium tracking-wide">DOSE AT 22:30</span></div><div class="flex items-center justify-between mt-1"><div class="flex flex-col min-w-0 pr-2"><h2 class="font-headline-sm text-[17px] text-text-primary font-semibold tracking-tight truncate">Fluticasone / Salmeterol</h2><span class="font-body-sm text-body-sm text-text-secondary mt-0.5">100/50 mcg • Dry Powder Inhaler (ICS + LABA)</span></div><div class="w-10 h-10 rounded-lg bg-surface-container-high/70 border border-gold-dim/25 flex items-center justify-center text-text-gold shrink-0 shadow-inner"><span class="material-symbols-outlined text-[20px]">medication</span></div></div></div><div class="flex items-center justify-between p-space-md rounded-xl bg-sapphire-surface/75 border border-celadon-mint/20 shadow-[0_4px_20px_rgba(0,0,0,0.35)] backdrop-blur-md relative overflow-hidden"><div class="absolute -left-10 -bottom-10 w-28 h-28 bg-celadon-mint/5 rounded-full blur-2xl pointer-events-none"></div><div class="flex items-center gap-3 min-w-0"><div class="w-11 h-11 rounded-xl bg-celadon-mint/10 border border-celadon-mint/30 flex items-center justify-center text-celadon-mint shrink-0 shadow-[0_0_16px_rgba(78,204,163,0.18)]"><span class="material-symbols-outlined text-[24px]">trending_down</span></div><div class="flex flex-col min-w-0"><span class="font-label-caps text-[10px] text-celadon-mint font-semibold tracking-wider uppercase">Overall Efficacy</span><span class="font-body-sm text-body-sm text-text-primary font-medium truncate">Reduction in nocturnal cough spasms</span></div></div><div class="flex flex-col items-end shrink-0 pl-2"><span class="font-telemetry-hero-mobile text-telemetry-hero-mobile text-celadon-mint font-bold tabular-nums leading-none tracking-tight">-79%</span><span class="font-label-caps text-[9px] text-celadon-mint/90 font-semibold tracking-wider mt-1 px-1.5 py-0.5 rounded bg-celadon-mint/10 border border-celadon-mint/20">CONFIRMED</span></div></div><div class="flex flex-col p-space-md rounded-xl bg-sapphire-surface/75 border border-gold-dim/15 gap-space-sm shadow-[0_4px_20px_rgba(0,0,0,0.35)] backdrop-blur-md"><div class="flex items-center justify-between"><span class="font-label-caps text-label-caps text-text-secondary uppercase tracking-widest">Pre-Dose vs. Post-Dose Window</span><span class="font-label-caps text-[10px] text-text-gold font-semibold tracking-wider px-2 py-0.5 rounded bg-primary/10 border border-primary/20">6H OBSERVATION</span></div><div class="grid grid-cols-2 gap-space-sm"><div class="flex flex-col p-3 rounded-lg bg-surface-container-low/90 border border-clinical-alert/20"><div class="flex items-center justify-between mb-1"><span class="font-label-caps text-[9px] text-clinical-alert uppercase font-semibold tracking-wider">Pre-Dose (-2h)</span><span class="w-1.5 h-1.5 rounded-full bg-clinical-alert shadow-[0_0_6px_#FF6B81]"></span></div><span class="font-body-sm text-body-sm text-text-secondary">20:30 – 22:30</span><div class="mt-2.5 flex items-baseline gap-1"><span class="font-telemetry-val text-telemetry-val font-semibold text-clinical-alert tabular-nums">19</span><span class="font-label-caps text-[10px] text-text-secondary">events/h</span></div><span class="font-label-caps text-[9px] text-clinical-alert font-semibold mt-1 tracking-wide">SEVERE (74 dB)</span></div><div class="flex flex-col p-3 rounded-lg bg-surface-container-low/90 border border-celadon-mint/20"><div class="flex items-center justify-between mb-1"><span class="font-label-caps text-[9px] text-celadon-mint uppercase font-semibold tracking-wider">Post-Dose (+4h)</span><span class="w-1.5 h-1.5 rounded-full bg-celadon-mint shadow-[0_0_6px_#4ECCA3]"></span></div><span class="font-body-sm text-body-sm text-text-secondary">22:30 – 04:30</span><div class="mt-2.5 flex items-baseline gap-1"><span class="font-telemetry-val text-telemetry-val font-semibold text-celadon-mint tabular-nums">04</span><span class="font-label-caps text-[10px] text-text-secondary">events/h</span></div><span class="font-label-caps text-[9px] text-celadon-mint font-semibold mt-1 tracking-wide">MILD (38 dB)</span></div></div></div><div class="flex flex-col p-space-md rounded-xl bg-sapphire-surface/75 border border-gold-dim/15 gap-space-sm shadow-[0_4px_20px_rgba(0,0,0,0.35)] backdrop-blur-md"><div class="flex items-center justify-between"><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-text-gold text-[16px]">show_chart</span><span class="font-label-caps text-[10px] text-text-primary uppercase tracking-wider font-semibold">Acoustic Response Trajectory</span></div><div class="flex items-center gap-2.5"><span class="flex items-center gap-1 font-label-caps text-[9px] text-clinical-alert font-medium"><span class="w-1.5 h-1.5 rounded-full bg-clinical-alert"></span>Spasms</span><span class="flex items-center gap-1 font-label-caps text-[9px] text-celadon-mint font-medium"><span class="w-1.5 h-1.5 rounded-full bg-celadon-mint"></span>Attenuated</span></div></div><div class="relative w-full h-28 bg-obsidian-base/90 border border-surface-container-highest/60 rounded-lg overflow-hidden p-2"><svg class="w-full h-full" fill="none" preserveaspectratio="none" viewbox="0 0 340 100"><defs><lineargradient id="preGradClean" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#FF6B81" stop-opacity="0.32"></stop><stop offset="100%" stop-color="#FF6B81" stop-opacity="0.0"></stop></lineargradient><lineargradient id="postGradClean" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#4ECCA3" stop-opacity="0.3"></stop><stop offset="100%" stop-color="#4ECCA3" stop-opacity="0.0"></stop></lineargradient><filter id="glowGold"><fegaussianblur result="coloredBlur" stddeviation="1.5"></fegaussianblur><femerge><femergenode in="coloredBlur"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter></defs><line stroke="#1c253b" stroke-dasharray="2 4" stroke-width="1" x1="0" x2="340" y1="30" y2="30"></line><line stroke="#1c253b" stroke-dasharray="2 4" stroke-width="1" x1="0" x2="340" y1="65" y2="65"></line><line stroke="#D4AF37" stroke-dasharray="3 3" stroke-width="1.5" x1="136" x2="136" y1="0" y2="100"></line><circle cx="136" cy="15" fill="#f2ca50" filter="url(#glowGold)" r="3"></circle><path d="M 0,78 L 15,74 L 25,28 L 32,82 L 45,70 L 52,18 L 60,65 L 75,76 L 85,22 L 95,84 L 110,60 L 120,15 L 128,70 L 136,55" stroke="#FF6B81" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M 0,78 L 15,74 L 25,28 L 32,82 L 45,70 L 52,18 L 60,65 L 75,76 L 85,22 L 95,84 L 110,60 L 120,15 L 128,70 L 136,55 L 136,95 L 0,95 Z" fill="url(#preGradClean)"></path><path d="M 136,55 L 150,68 L 165,72 L 180,58 L 195,78 L 210,75 L 225,82 L 240,80 L 255,84 L 270,82 L 285,65 L 295,82 L 315,84 L 340,85" stroke="#4ECCA3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M 136,55 L 150,68 L 165,72 L 180,58 L 195,78 L 210,75 L 225,82 L 240,80 L 255,84 L 270,82 L 285,65 L 295,82 L 315,84 L 340,85 L 340,95 L 136,95 Z" fill="url(#postGradClean)"></path></svg><div class="absolute top-2 left-[142px] px-1.5 py-0.5 rounded bg-primary/15 border border-primary/30 text-text-gold font-label-caps text-[9px] font-semibold tracking-wider">DOSE TAKEN</div></div><div class="flex justify-between items-center text-text-secondary/70 font-label-caps text-[10px] px-1"><span>20:30</span><span>21:30</span><span class="text-text-gold font-semibold">22:30</span><span>00:30</span><span>02:30</span><span>04:30</span></div></div><div class="flex items-start gap-space-sm p-space-md rounded-xl bg-sapphire-surface/85 border-l-2 border-l-primary border-y border-r border-gold-dim/15 shadow-[0_4px_20px_rgba(0,0,0,0.35)]"><div class="w-9 h-9 rounded-lg bg-primary/10 border border-primary/25 text-text-gold flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[18px]">stethoscope</span></div><div class="flex flex-col min-w-0"><span class="font-label-caps text-[10px] text-text-gold font-semibold uppercase tracking-wider">Clinical Directive</span><p class="font-body-sm text-body-sm text-on-surface mt-1 leading-relaxed">Bronchodilator response confirms reversible airway hyperreactivity. Nocturnal cough spasms suppressed by 79% within 42 minutes.</p></div></div></div><div class="fixed inset-0 z-50 bg-obsidian-base/80 backdrop-blur-md flex items-end justify-center hidden opacity-0 transition-opacity duration-200" id="log-modal" style="display:flex;" class="fixed inset-0 z-50 bg-obsidian-base/80 backdrop-blur-md flex items-end justify-center hidden opacity-0 transition-opacity duration-200"><div class="flex flex-col w-full max-w-md bg-sapphire-surface border-t border-x border-gold-dim/30 rounded-t-2xl p-space-lg gap-space-md shadow-[0_-8px_32px_rgba(0,0,0,0.7)] transform translate-y-full transition-transform duration-200" id="modal-container"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-text-gold">medication</span><span class="font-headline-sm text-headline-sm font-semibold text-text-primary">Log Medication Dose</span></div><button class="p-1 rounded-full bg-surface-container-high text-text-secondary hover:text-text-primary" id="close-log-modal"><span class="material-symbols-outlined text-[20px]">close</span></button></div><div class="flex flex-col gap-1.5"><span class="font-label-caps text-label-caps text-gold-dim uppercase tracking-wider">Classification</span><div class="grid grid-cols-2 gap-2" id="type-selector"><button class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-gradient-to-r from-primary-container to-[#cba33d] text-obsidian-base font-label-caps text-label-caps font-bold shadow-[0_2px_10px_rgba(212,175,55,0.3)]"><span class="material-symbols-outlined text-[16px]">air</span> Inhaler</button><button class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-surface-container-low border border-gold-dim/15 text-text-primary font-label-caps text-label-caps"><span class="material-symbols-outlined text-[16px]">pulmonology</span> Bronchodilator</button><button class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-surface-container-low border border-gold-dim/15 text-text-primary font-label-caps text-label-caps"><span class="material-symbols-outlined text-[16px]">medication_liquid</span> Suppressant</button><button class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-surface-container-low border border-gold-dim/15 text-text-primary font-label-caps text-label-caps"><span class="material-symbols-outlined text-[16px]">grain</span> Nebulizer</button></div></div><div class="flex flex-col gap-1.5"><span class="font-label-caps text-label-caps text-gold-dim uppercase tracking-wider">Dosage &amp; Compound</span><input class="w-full bg-surface-container-low text-text-primary px-3 py-2.5 rounded-lg border border-gold-dim/20 font-body-sm text-body-sm outline-none focus:border-primary focus:bg-surface-container" type="text" value="Fluticasone / Salmeterol (100/50 mcg)"/></div><div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low border border-gold-dim/15"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-text-gold text-[18px]">schedule</span><span class="font-body-sm text-body-sm text-text-primary">Administration Time</span></div><span class="font-label-caps text-label-caps text-text-gold bg-primary/15 border border-primary/25 px-2 py-1 rounded font-semibold">NOW</span></div><button class="w-full py-3 rounded-xl bg-gradient-to-r from-primary-container via-[#E2C974] to-[#cba33d] text-obsidian-base font-headline-sm text-[16px] font-bold tracking-wide shadow-[0_0_24px_rgba(212,175,55,0.35)] border border-white/20 active:scale-[0.98] transition-transform" id="submit-log">Confirm &amp; Record Dose</button></div></div>
     </section>
 
     <!-- VIEW 5: EDGE IOT -->
@@ -1964,6 +1964,220 @@
     // Auto-refresh AI dashboard periodically
     setInterval(refreshAIDashboard, 7000);
     setTimeout(refreshAIDashboard, 1200);
+
+  
+    // ==========================================
+    // DYNAMIC FIXES & INTERACTIVITY (Added by AI)
+    // ==========================================
+
+    // 1. Advanced Sentinel Tab Navigation Fixes
+    const btnNextDirectives = document.getElementById('adv-next-directives');
+    const btnNextStepEHR = document.getElementById('nextStepBtn');
+    const btnBackToPheno = document.getElementById('backToPhenoBtn');
+
+    const tabPheno = document.getElementById('adv-tab-pheno');
+    const tabDirectives = document.getElementById('adv-tab-directives');
+    const tabEHR = document.getElementById('adv-tab-ehr');
+
+    if(btnNextDirectives) btnNextDirectives.addEventListener('click', () => tabDirectives.click());
+    if(btnNextStepEHR) btnNextStepEHR.addEventListener('click', () => tabEHR.click());
+    if(btnBackToPheno) {
+        btnBackToPheno.addEventListener('click', (e) => {
+            e.preventDefault();
+            tabPheno.click();
+        });
+    }
+
+    // 2. EHR Interop Buttons
+    const copyPayloadBtn = document.getElementById('copyPayloadBtn');
+    if(copyPayloadBtn) {
+        copyPayloadBtn.addEventListener('click', () => {
+            const payloadBox = copyPayloadBtn.closest('.lux-subcard').querySelector('.font-telemetry-hero-mobile');
+            if(payloadBox) {
+                navigator.clipboard.writeText(payloadBox.innerText).then(() => {
+                    const origHtml = copyPayloadBtn.innerHTML;
+                    copyPayloadBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">check</span><span>COPIED</span>';
+                    copyPayloadBtn.classList.add('text-celadon-mint');
+                    setTimeout(() => {
+                        copyPayloadBtn.innerHTML = origHtml;
+                        copyPayloadBtn.classList.remove('text-celadon-mint');
+                    }, 2000);
+                });
+            }
+        });
+    }
+
+    const urgentToggle = document.getElementById('urgentToggle');
+    if(urgentToggle) {
+        urgentToggle.addEventListener('click', () => {
+            urgentToggle.classList.toggle('bg-surface-container-highest');
+            urgentToggle.classList.toggle('bg-celadon-mint/20');
+            urgentToggle.classList.toggle('border-outline-variant/30');
+            urgentToggle.classList.toggle('border-celadon-mint/50');
+            const dot = urgentToggle.querySelector('span');
+            if(dot) {
+                dot.classList.toggle('translate-x-0');
+                dot.classList.toggle('translate-x-4');
+                dot.classList.toggle('bg-text-secondary');
+                dot.classList.toggle('bg-celadon-mint');
+            }
+        });
+    }
+
+    const dispatchActionBtn = document.getElementById('dispatchActionBtn');
+    if(dispatchActionBtn) {
+        dispatchActionBtn.addEventListener('click', () => {
+            const origHtml = dispatchActionBtn.innerHTML;
+            dispatchActionBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[16px]">sync</span><span>ENCRYPTING & SENDING...</span>';
+            setTimeout(() => {
+                dispatchActionBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">verified</span><span>SENT SUCCESSFULLY</span>';
+                dispatchActionBtn.classList.remove('from-primary', 'to-gold-dim', 'text-on-primary');
+                dispatchActionBtn.classList.add('bg-celadon-mint', 'text-[#003731]');
+                setTimeout(() => {
+                    dispatchActionBtn.innerHTML = origHtml;
+                    dispatchActionBtn.classList.add('from-primary', 'to-gold-dim', 'text-on-primary');
+                    dispatchActionBtn.classList.remove('bg-celadon-mint', 'text-[#003731]');
+                }, 3000);
+            }, 1500);
+        });
+    }
+
+    const downloadDossierBtn = document.getElementById('downloadDossierBtn');
+    if(downloadDossierBtn) {
+        downloadDossierBtn.addEventListener('click', () => {
+            const origHtml = downloadDossierBtn.innerHTML;
+            downloadDossierBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[16px]">sync</span><span>GENERATING PDF...</span>';
+            setTimeout(() => {
+                downloadDossierBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">check_circle</span><span>DOWNLOADED</span>';
+                const a = document.createElement('a');
+                a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent('Mock Patient Dossier FHIR R4\nPatient: Eleanor Vance\nStatus: COPD Stage III');
+                a.download = 'Patient_Dossier_FHIR.txt';
+                a.click();
+                setTimeout(() => downloadDossierBtn.innerHTML = origHtml, 3000);
+            }, 1000);
+        });
+    }
+
+    // 3. Analytics View - FHIR Export & Toast
+    window.triggerFhirExport = function() {
+        const btn = document.getElementById('fhirExportBtn');
+        if(btn) {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[16px]">sync</span><span>EXPORTING...</span>';
+            setTimeout(() => {
+                const toast = document.getElementById('toastNotification');
+                if(toast) {
+                    toast.classList.remove('hidden');
+                    toast.classList.remove('opacity-0');
+                }
+                btn.innerHTML = orig;
+                const a = document.createElement('a');
+                a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify({resourceType: "DiagnosticReport", status: "final", code: {text: "Sleep Telemetry"}}));
+                a.download = 'NightDoc_FHIR_Report.json';
+                a.click();
+            }, 1200);
+        }
+    };
+
+    window.closeToast = function() {
+        const toast = document.getElementById('toastNotification');
+        if(toast) {
+            toast.classList.add('hidden');
+            toast.classList.add('opacity-0');
+        }
+    };
+
+    // 4. Ambient View - Weather API & Humidifier Toggle
+    // Use Open-Meteo for real-time Bucuresti weather
+    const tempValEl = document.querySelector('#view-ambient .font-telemetry-hero-mobile.text-celadon-mint');
+    const humValEl = document.querySelector('#view-ambient .font-telemetry-hero-mobile.text-clinical-alert');
+
+    async function fetchAmbientData() {
+        try {
+            const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=44.4323&longitude=26.1063&current_weather=true&hourly=relative_humidity_2m');
+            const data = await res.json();
+            if(data && data.current_weather) {
+                if(tempValEl) tempValEl.textContent = data.current_weather.temperature.toFixed(1);
+                if(humValEl && data.hourly && data.hourly.relative_humidity_2m) {
+                    humValEl.textContent = data.hourly.relative_humidity_2m[0];
+                }
+            }
+        } catch(e) {
+            console.warn('Weather API failed, using mock data.', e);
+        }
+    }
+    fetchAmbientData();
+
+    const btnHumidifier = document.getElementById('btn-humidifier');
+    let humidifierRunning = false;
+    if(btnHumidifier) {
+        btnHumidifier.addEventListener('click', () => {
+            humidifierRunning = !humidifierRunning;
+            if(humidifierRunning) {
+                btnHumidifier.innerHTML = '<span class="material-symbols-outlined animate-spin text-[15px]">mode_fan</span><span>Humidifier Running</span>';
+                btnHumidifier.classList.add('from-celadon-mint', 'to-[#3b9f80]');
+                btnHumidifier.classList.remove('from-primary', 'to-gold-dim');
+            } else {
+                btnHumidifier.innerHTML = '<span>Turn on Humidifier</span><span class="material-symbols-outlined text-[15px]">power_settings_new</span>';
+                btnHumidifier.classList.remove('from-celadon-mint', 'to-[#3b9f80]');
+                btnHumidifier.classList.add('from-primary', 'to-gold-dim');
+            }
+        });
+    }
+
+    // 5. Efficacy View - Modal Interactivity
+    const btnOpenLog = document.getElementById('open-log-modal');
+    const btnCloseLog = document.getElementById('close-log-modal');
+    const logModal = document.getElementById('log-modal');
+    const modalContainer = document.getElementById('modal-container');
+    const typeSelectorBtns = document.querySelectorAll('#type-selector button');
+    const submitLog = document.getElementById('submit-log');
+
+    if(btnOpenLog && logModal && modalContainer) {
+        btnOpenLog.addEventListener('click', () => {
+            logModal.classList.remove('hidden');
+            setTimeout(() => {
+                logModal.classList.remove('opacity-0');
+                modalContainer.classList.remove('translate-y-full');
+            }, 10);
+        });
+    }
+    
+    function closeLogModalFunc() {
+        if(logModal && modalContainer) {
+            logModal.classList.add('opacity-0');
+            modalContainer.classList.add('translate-y-full');
+            setTimeout(() => logModal.classList.add('hidden'), 200);
+        }
+    }
+    if(btnCloseLog) btnCloseLog.addEventListener('click', closeLogModalFunc);
+    if(logModal) logModal.addEventListener('click', (e) => {
+        if(e.target === logModal) closeLogModalFunc();
+    });
+
+    typeSelectorBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            typeSelectorBtns.forEach(b => {
+                b.classList.remove('bg-gradient-to-r', 'from-primary-container', 'to-[#cba33d]', 'text-obsidian-base', 'shadow-[0_2px_10px_rgba(212,175,55,0.3)]');
+                b.classList.add('bg-surface-container-low', 'border-gold-dim/15', 'text-text-primary');
+            });
+            btn.classList.add('bg-gradient-to-r', 'from-primary-container', 'to-[#cba33d]', 'text-obsidian-base', 'shadow-[0_2px_10px_rgba(212,175,55,0.3)]');
+            btn.classList.remove('bg-surface-container-low', 'border-gold-dim/15', 'text-text-primary');
+        });
+    });
+
+    if(submitLog) {
+        submitLog.addEventListener('click', () => {
+            const orig = submitLog.innerHTML;
+            submitLog.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Recording...';
+            setTimeout(() => {
+                submitLog.innerHTML = orig;
+                closeLogModalFunc();
+                const doseTimeText = document.querySelector('#view-efficacy .text-text-secondary.tracking-wide');
+                if(doseTimeText) doseTimeText.textContent = 'DOSE AT ' + new Date().toLocaleTimeString('en-US', {hour12: false, hour: '2-digit', minute: '2-digit'});
+            }, 800);
+        });
+    }
 
   </script>
 </body>
