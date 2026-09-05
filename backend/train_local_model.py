@@ -16,10 +16,23 @@ if sys.stdout.encoding != 'utf-8':
     except Exception:
         pass
 
-# 1. Clase medicale si de mediu pentru RespiSense AI (Health & Research)
+# 1. Clase medicale si de mediu pentru RespiSense AI / NightDoc
 SELECTED_CLASSES = ['coughing', 'breathing', 'snoring', 'sneezing', 'crying_baby', 'conversation', 'background']
 CLASS_TO_IDX = {cls: idx for idx, cls in enumerate(SELECTED_CLASSES)}
 print(f"RespiSense AI - Clase respiratorii selectate ({len(SELECTED_CLASSES)}): {CLASS_TO_IDX}")
+
+# Mapare directoare suplimentare din COUGHVID / Coswara catre clasele principale
+FOLDER_MAPPING = {
+    'tuse_seaca_dry': 'coughing',
+    'tuse_productiva_heavy': 'coughing',
+    'respiratie_profunda_wheezing': 'breathing',
+    'respiratie_superficiala_detresa': 'breathing',
+    'conversatie': 'conversation',
+    'conversation': 'conversation',
+    'speech': 'conversation',
+    'background': 'background',
+    'fundal': 'background'
+}
 
 # 2. Dataset personalizat cu segmentare audio de 3 secunde
 class ChunkedSoundDataset(Dataset):
@@ -42,7 +55,6 @@ class ChunkedSoundDataset(Dataset):
             try:
                 data, sr = sf.read(file_path, dtype='float32')
             except Exception as e:
-                print(f"Eroare la citire {file_path}: {e}")
                 continue
 
             waveform = torch.from_numpy(data)
@@ -62,10 +74,10 @@ class ChunkedSoundDataset(Dataset):
             dur = L / self.sample_rate
 
             if category in ['coughing', 'sneezing']:
-                hop_sec = 0.5   # Sunete scurte, importante
+                hop_sec = 0.5
                 max_chunks = 150
             elif category in ['breathing', 'snoring']:
-                hop_sec = 0.75  # Pattern ciclic
+                hop_sec = 0.75
                 max_chunks = 120
             elif category == 'conversation':
                 hop_sec = 4.0
@@ -112,7 +124,7 @@ class ChunkedSoundDataset(Dataset):
         spec, target = self.samples[idx]
         return spec, target
 
-# 3. Modelul CNN Usor (optimizat pentru viteza pe CPU/NPU)
+# 3. Modelul CNN Usor (optimizat pentru Edge / Microsoft ONNX Runtime)
 class LightSoundCNN(nn.Module):
     def __init__(self, num_classes):
         super(LightSoundCNN, self).__init__()
@@ -154,6 +166,7 @@ if __name__ == "__main__":
     
     raw_samples = []
     
+    # 1. Date ESC-50
     if os.path.exists(csv_path):
         df = pd.read_csv(csv_path)
         medical_categories = ['coughing', 'breathing', 'snoring', 'sneezing', 'crying_baby']
@@ -170,19 +183,17 @@ if __name__ == "__main__":
                 if os.path.exists(fpath):
                     raw_samples.append((fpath, 'background'))
                 
+    # 2. Date Clinice Suplimentare COUGHVID & Coswara
     if os.path.exists(additional_dir):
         for root, _, files in os.walk(additional_dir):
             for f in files:
                 if f.lower().endswith('.wav'):
-                    category = os.path.basename(root).lower()
-                    if category in ['conversatie', 'conversation', 'speech']:
-                        category = 'conversation'
-                    elif category in ['background', 'fundal']:
-                        category = 'background'
-                    if category in CLASS_TO_IDX:
-                        raw_samples.append((os.path.join(root, f), category))
+                    folder_name = os.path.basename(root).lower()
+                    target_category = FOLDER_MAPPING.get(folder_name, folder_name)
+                    if target_category in CLASS_TO_IDX:
+                        raw_samples.append((os.path.join(root, f), target_category))
                         
-    print(f"Total fisiere audio unice incarcate: {len(raw_samples)}")
+    print(f"Total fisiere audio unice incarcate (ESC-50 + COUGHVID/Coswara): {len(raw_samples)}")
     
     dataset = ChunkedSoundDataset(raw_samples)
     
@@ -234,4 +245,4 @@ if __name__ == "__main__":
         dynamic_axes={'audio_spectrogram': {0: 'batch_size'}, 'class_probabilities': {0: 'batch_size'}},
         dynamo=False
     )
-    print(f"[SUCCES] Modelul RespiSense AI a fost exportat cu succes in: {onnx_file}")
+    print(f"[SUCCES] Modelul RespiSense AI imbogatit cu COUGHVID a fost exportat in: {onnx_file}")
