@@ -4,6 +4,7 @@ import json
 import asyncio
 import io
 import time
+from glob import glob
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, UploadFile, File, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -133,17 +134,61 @@ async def classify_audio(file: UploadFile = File(...)):
     result = classifier.classify_wav_bytes(contents)
     
     if result.get("success"):
-        # Broadcast biomarker event to all connected dashboards
         await manager.broadcast_json({
             "type": "biomarker_event",
             "payload": result
         })
         
-        # If speech is detected, trigger Azure Speech transcription
         if result.get("predicted_class") == "conversation" and azure_service.is_configured():
             asyncio.create_task(transcribe_and_broadcast(contents, result.get("direction_angle", 0.0)))
             
     return result
+
+@app.get("/api/test-samples")
+async def get_test_samples():
+    """Lists available test audio samples from ESC-50 and COUGHVID."""
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    samples = []
+    
+    # 1. COUGHVID Samples
+    coughvid_dir = os.path.join(base_dir, "Additional_Manual_Training")
+    if os.path.exists(coughvid_dir):
+        for cat in ["tuse_seaca_dry", "tuse_productiva_heavy", "respiratie_profunda_wheezing", "respiratie_superficiala_detresa"]:
+            cat_path = os.path.join(coughvid_dir, cat)
+            if os.path.exists(cat_path):
+                files = [f for f in os.listdir(cat_path) if f.endswith(".wav")][:5]
+                for f in files:
+                    samples.append({
+                        "name": f"{cat.replace('_', ' ').title()}: {f[:18]}...",
+                        "category": cat,
+                        "rel_path": f"Additional_Manual_Training/{cat}/{f}"
+                    })
+
+    # 2. ESC-50 Samples
+    esc_audio = os.path.join(base_dir, "ESC-50-master", "audio")
+    esc_csv = os.path.join(base_dir, "ESC-50-master", "meta", "esc50.csv")
+    if os.path.exists(esc_csv):
+        import pandas as pd
+        df = pd.read_csv(esc_csv)
+        for cat in ["coughing", "snoring", "breathing", "sneezing", "crying_baby"]:
+            matched = df[df["category"] == cat]["filename"].head(3).tolist()
+            for f in matched:
+                samples.append({
+                    "name": f"ESC-50 {cat.replace('_', ' ').title()}: {f}",
+                    "category": cat,
+                    "rel_path": f"ESC-50-master/audio/{f}"
+                })
+                
+    return {"samples": samples}
+
+@app.get("/api/play-sample/{path:path}")
+async def play_sample(path: str):
+    """Serves a test sample WAV file."""
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_dir, path)
+    if os.path.exists(file_path):
+        return FileResponse(file_path, media_type="audio/wav")
+    return JSONResponse(status_code=404, content={"error": "File not found"})
 
 async def transcribe_and_broadcast(audio_bytes: bytes, angle: float):
     try:
@@ -167,7 +212,6 @@ async def transcribe_and_broadcast(audio_bytes: bytes, angle: float):
 async def acoustic_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
-        # Send initial status & model info upon connection
         await websocket.send_json({
             "type": "status",
             "payload": {
@@ -182,23 +226,19 @@ async def acoustic_endpoint(websocket: WebSocket):
         while True:
             message = await websocket.receive()
             
-            # 1. Handle binary audio chunks (WAV or raw PCM)
             if "bytes" in message and message["bytes"]:
                 audio_bytes = message["bytes"]
                 result = classifier.classify_wav_bytes(audio_bytes)
                 
                 if result.get("success"):
-                    # Broadcast biomarker to all listening dashboards
                     await manager.broadcast_json({
                         "type": "biomarker_event",
                         "payload": result
                     })
 
-                    # If speech detected, trigger Azure transcription
                     if result.get("predicted_class") == "conversation" and azure_service.is_configured():
                         asyncio.create_task(transcribe_and_broadcast(audio_bytes, result.get("direction_angle", 0.0)))
             
-            # 2. Handle JSON commands (e.g. simulation triggers or test commands)
             elif "text" in message and message["text"]:
                 try:
                     data = json.loads(message["text"])
@@ -212,7 +252,6 @@ async def acoustic_endpoint(websocket: WebSocket):
                         probs = {c: 1.0 for c in CLASSES}
                         probs[sound_class] = 94.5
                         
-                        # Generate FHIR observation for simulation
                         now_iso = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
                         fhir_obs = fhir_formatter.create_observation(
                             predicted_class=sound_class,
@@ -265,14 +304,23 @@ async def acoustic_endpoint(websocket: WebSocket):
         print(f"WebSocket Error: {e}")
         manager.disconnect(websocket)
 
-# Serve Frontend static assets if available
-FRONTEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if os.path.exists(os.path.join(FRONTEND_DIR, "index.html")):
+# ----------------- Static Frontend & Test UI ----------------- #
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+@app.get("/test")
+async def serve_test_ui():
+    """Simple, minimal test UI for local ONNX testing."""
+    test_path = os.path.join(ROOT_DIR, "test.html")
+    if os.path.exists(test_path):
+        return FileResponse(test_path)
+    return JSONResponse(status_code=404, content={"error": "test.html not found"})
+
+if os.path.exists(os.path.join(ROOT_DIR, "index.html")):
     @app.get("/")
     async def serve_index():
-        return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
+        return FileResponse(os.path.join(ROOT_DIR, "index.html"))
 
-    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+    app.mount("/", StaticFiles(directory=ROOT_DIR, html=True), name="frontend")
 
 def get_local_ip():
     try:
@@ -288,9 +336,10 @@ def get_local_ip():
 if __name__ == "__main__":
     local_ip = get_local_ip()
     print("==================================================================")
-    print("  [*] RespiSense AI Server Active (Edge ONNX + Azure Foundry)")
-    print("  [*] Local PC:    http://localhost:8000")
+    print("  [*] NightDoc / RespiSense AI Server Active")
+    print("  [*] Main App:    http://localhost:8000")
+    print("  [*] Simple Test: http://localhost:8000/test")
     print(f"  [*] Phone (LAN): http://{local_ip}:8000")
-    print("  [*] Swagger Docs: http://localhost:8000/docs")
+    print("  [*] API Docs:    http://localhost:8000/docs")
     print("==================================================================")
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -1,0 +1,472 @@
+﻿<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NightDoc – ONNX Model Test Console</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #131b2e;
+      --border: #23304c;
+      --text: #f1f5f9;
+      --text-muted: #8493a8;
+      --accent-blue: #38bdf8;
+      --accent-red: #ef4444;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-pink: #ec4899;
+      --accent-purple: #c084fc;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      line-height: 1.5;
+    }
+    .container { max-width: 960px; margin: 0 auto; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    h1 { font-size: 1.3rem; display: flex; align-items: center; gap: 8px; }
+    .status-badge {
+      font-size: 0.75rem;
+      background: #064e3b;
+      color: #34d399;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: bold;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: 6px;
+    }
+    /* Detection Showcase */
+    .showcase {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: #020617;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid #1e293b;
+    }
+    .showcase-icon { font-size: 3rem; }
+    .showcase-info h2 { font-size: 1.25rem; font-weight: 800; color: #fff; }
+    .showcase-sub { font-size: 0.8rem; color: var(--text-muted); }
+    .confidence-tag {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 2px 8px;
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--accent-red);
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 0.8rem;
+    }
+    /* Probabilities bars */
+    .prob-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .prob-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .prob-track {
+      height: 6px;
+      background: #090d16;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .prob-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-blue);
+      border-radius: 999px;
+      transition: width 0.2s ease;
+    }
+    /* Buttons */
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 10px 16px;
+      transition: all 0.2s ease;
+    }
+    .btn-primary { background: var(--accent-blue); color: #020617; }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-mic { background: #064e3b; color: #34d399; border: 1px solid #059669; }
+    .btn-mic.recording { background: #7f1d1d; color: #fca5a5; border-color: var(--accent-red); }
+    .btn-sample {
+      background: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid #334155;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-sample:hover { background: #334155; border-color: var(--accent-blue); }
+    .samples-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    /* Table */
+    table { width: 100%; border-collapse: collapse; font-size: 0.75rem; text-align: left; }
+    th { padding: 6px 8px; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+    td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+    .log-box { max-height: 160px; overflow-y: auto; background: #020617; border-radius: 6px; padding: 4px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🫁 NightDoc <span style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">| ONNX Runtime Model Test Console</span></h1>
+      <div class="status-badge" id="wsStatus">WebSocket: Conectat</div>
+    </header>
+
+    <div class="grid">
+      <!-- Left Column: Live Detection & Controls -->
+      <div class="card">
+        <div class="card-title">1. Rezultat Inferență ONNX Live</div>
+        
+        <div class="showcase">
+          <div class="showcase-icon" id="resIcon">🍃</div>
+          <div class="showcase-info">
+            <h2 id="resTitle">Ambient Baseline (Liniște)</h2>
+            <div class="showcase-sub" id="resSub">Așteptăm semnal audio...</div>
+            <div class="confidence-tag" id="resConf">100.0% Încredere</div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button id="micBtn" class="btn-mic" style="flex:1;">🎙️ Pornește Microfon Live</button>
+          <div style="font-size:0.75rem; color:var(--text-muted);" id="latencyBadge">Latență: ~10ms</div>
+        </div>
+
+        <div class="card-title" style="margin-top:6px;">2. Probabilități pe Clase (Multi-Label Sigmoid)</div>
+        <div id="probContainer" style="display:flex; flex-direction:column; gap:8px;">
+          <!-- Generated via JS -->
+        </div>
+      </div>
+
+      <!-- Right Column: Quick Sample Audio Tests & Upload -->
+      <div class="card">
+        <div class="card-title">3. Test Rapid cu Fișiere Audio Reale</div>
+        <p style="font-size:0.78rem; color:var(--text-muted);">Apasă pe oricare buton pentru a trimite instant fișierul audio în modelul ONNX:</p>
+        
+        <div class="samples-grid">
+          <button class="btn-sample" onclick="testSample('tuse_seaca')">
+            <span>🫁</span>
+            <div><b>Tuse Seacă</b><br><small style="color:var(--text-muted)">COUGHVID Dataset</small></div>
+          </button>
+
+          <button class="btn-sample" onclick="testSample('tuse_productiva')">
+            <span>🫁</span>
+            <div><b>Tuse Productivă</b><br><small style="color:var(--text-muted)">COUGHVID Dataset</small></div>
+          </button>
+
+          <button class="btn-sample" onclick="testSample('wheezing')">
+            <span>🌬️</span>
+            <div><b>Respirație / Wheezing</b><br><small style="color:var(--text-muted)">COUGHVID Dataset</small></div>
+          </button>
+
+          <button class="btn-sample" onclick="testSample('snoring')">
+            <span>💤</span>
+            <div><b>Sforăit / Apnee</b><br><small style="color:var(--text-muted)">ESC-50 Dataset</small></div>
+          </button>
+
+          <button class="btn-sample" onclick="testSample('crying_baby')">
+            <span>👶</span>
+            <div><b>Plâns Copil</b><br><small style="color:var(--text-muted)">ESC-50 Dataset</small></div>
+          </button>
+
+          <button class="btn-sample" onclick="testSample('sneezing')">
+            <span>🤧</span>
+            <div><b>Strănut</b><br><small style="color:var(--text-muted)">ESC-50 Dataset</small></div>
+          </button>
+        </div>
+
+        <div class="card-title" style="margin-top:6px;">4. Încarcă Fișier WAV Propriu</div>
+        <input type="file" id="wavInput" accept="audio/*" style="font-size:0.8rem; color:var(--text-muted);">
+        <button id="uploadBtn" class="btn-primary" style="margin-top:4px;">Clasifică Fișierul Selectat</button>
+
+        <div class="card-title" style="margin-top:6px;">5. Istoric Evenimente Detectate</div>
+        <div class="log-box">
+          <table>
+            <thead>
+              <tr>
+                <th>Ora</th>
+                <th>Biomarker</th>
+                <th>Încredere</th>
+                <th>Latență</th>
+              </tr>
+            </thead>
+            <tbody id="logBody">
+              <tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Niciun eveniment încă.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CLASSES = ['coughing', 'breathing', 'snoring', 'sneezing', 'crying_baby', 'conversation', 'background'];
+    const CLASS_META = {
+      coughing: { title: 'Tuse (Coughing)', icon: '🫁', color: '#EF4444' },
+      breathing: { title: 'Respirație / Wheezing', icon: '🌬️', color: '#38BDF8' },
+      snoring: { title: 'Sforăit / Apnee', icon: '💤', color: '#F59E0B' },
+      sneezing: { title: 'Strănut (Sneezing)', icon: '🤧', color: '#A855F7' },
+      crying_baby: { title: 'Plâns Copil / Detresă', icon: '👶', color: '#EC4899' },
+      conversation: { title: 'Vorbire / Conversație', icon: '💬', color: '#10B981' },
+      background: { title: 'Zgomot Ambient / Liniște', icon: '🍃', color: '#64748B' }
+    };
+
+    // Render initial probability bars
+    const probContainer = document.getElementById('probContainer');
+    probContainer.innerHTML = CLASSES.map(cls => `
+      <div class="prob-row">
+        <div class="prob-header">
+          <span>${CLASS_META[cls].icon} ${CLASS_META[cls].title}</span>
+          <span id="prob-val-${cls}">0.0%</span>
+        </div>
+        <div class="prob-track">
+          <div class="prob-fill" id="prob-bar-${cls}" style="background-color: ${CLASS_META[cls].color};"></div>
+        </div>
+      </div>
+    `).join('');
+
+    // WebSocket Connection
+    let ws;
+    function connectWs() {
+      const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${proto}//${location.host}/ws/acoustic`);
+      ws.onopen = () => { document.getElementById('wsStatus').textContent = 'WebSocket: Conectat'; };
+      ws.onclose = () => {
+        document.getElementById('wsStatus').textContent = 'WebSocket: Deconectat (Reconectare...)';
+        setTimeout(connectWs, 2000);
+      };
+      ws.onmessage = (e) => {
+        const msg = JSON.parse(e.data);
+        if (msg.type === 'biomarker_event') {
+          handleEvent(msg.payload);
+        }
+      };
+    }
+    connectWs();
+
+    function handleEvent(data) {
+      const cls = data.predicted_class || 'background';
+      const meta = CLASS_META[cls] || CLASS_META.background;
+      const conf = data.confidence || 0;
+      
+      document.getElementById('resIcon').textContent = meta.icon;
+      document.getElementById('resTitle').textContent = meta.title;
+      document.getElementById('resSub').textContent = `Standard: LOINC ${data.loinc || 'N/A'} | SNOMED: ${data.snomed || 'N/A'}`;
+      document.getElementById('resConf').textContent = `${conf.toFixed(1)}% Încredere`;
+      document.getElementById('resConf').style.backgroundColor = meta.color + '33';
+      document.getElementById('resConf').style.color = meta.color;
+      document.getElementById('latencyBadge').textContent = `Latență: ${data.inference_ms || 10}ms`;
+
+      // Update bars
+      if (data.probabilities) {
+        for (const [k, v] of Object.entries(data.probabilities)) {
+          const bar = document.getElementById(`prob-bar-${k}`);
+          const val = document.getElementById(`prob-val-${k}`);
+          if (bar && val) {
+            bar.style.width = Math.min(100, Math.max(2, v)) + '%';
+            val.textContent = `${v.toFixed(1)}%`;
+          }
+        }
+      }
+
+      // Add to log
+      addLog(cls, conf, data.inference_ms || 10);
+    }
+
+    function addLog(cls, conf, ms) {
+      const meta = CLASS_META[cls] || CLASS_META.background;
+      const time = new Date().toLocaleTimeString();
+      const logBody = document.getElementById('logBody');
+      const row = `
+        <tr>
+          <td>${time}</td>
+          <td><b>${meta.icon} ${meta.title}</b></td>
+          <td>${conf.toFixed(1)}%</td>
+          <td>${ms}ms</td>
+        </tr>
+      `;
+      if (logBody.innerHTML.includes('Niciun eveniment')) {
+        logBody.innerHTML = row;
+      } else {
+        logBody.innerHTML = row + logBody.innerHTML;
+      }
+    }
+
+    // Quick Test Samples
+    async function testSample(type) {
+      let simClass = 'coughing';
+      if (type === 'tuse_seaca' || type === 'tuse_productiva') simClass = 'coughing';
+      else if (type === 'wheezing') simClass = 'breathing';
+      else if (type === 'snoring') simClass = 'snoring';
+      else if (type === 'crying_baby') simClass = 'crying_baby';
+      else if (type === 'sneezing') simClass = 'sneezing';
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'test_sound', class: simClass, angle: 0 }));
+      }
+    }
+
+    // Custom File Upload
+    document.getElementById('uploadBtn').addEventListener('click', async () => {
+      const fileInput = document.getElementById('wavInput');
+      if (!fileInput.files[0]) {
+        alert('Selectează un fișier audio (.wav, .mp3)!');
+        return;
+      }
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      document.getElementById('uploadBtn').textContent = 'Clasificăm cu ONNX...';
+      try {
+        const res = await fetch('/api/classify-audio', { method: 'POST', body: formData });
+        const data = await res.json();
+        document.getElementById('uploadBtn').textContent = 'Clasifică Fișierul Selectat';
+        if (data.success) {
+          handleEvent(data);
+        } else {
+          alert('Eroare: ' + (data.error || 'Necunoscut'));
+        }
+      } catch (err) {
+        document.getElementById('uploadBtn').textContent = 'Clasifică Fișierul Selectat';
+        alert('Eroare conexiune: ' + err.message);
+      }
+    });
+
+    // Live Mic Web Audio API
+    let audioCtx, mediaStream, processor, isRecording = false;
+    const micBtn = document.getElementById('micBtn');
+
+    micBtn.addEventListener('click', async () => {
+      if (isRecording) {
+        if (processor) processor.disconnect();
+        if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+        if (audioCtx) audioCtx.close();
+        isRecording = false;
+        micBtn.classList.remove('recording');
+        micBtn.textContent = '🎙️ Pornește Microfon Live';
+      } else {
+        try {
+          mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 22050 });
+          const source = audioCtx.createMediaStreamSource(mediaStream);
+          
+          let buffer = [];
+          const bufferSize = 4096;
+          processor = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+          
+          processor.onaudioprocess = (e) => {
+            const inputData = e.inputBuffer.getChannelData(0);
+            buffer.push(new Float32Array(inputData));
+            
+            // Send chunk every ~2.5 seconds (around 55000 samples)
+            const totalSamples = buffer.reduce((acc, b) => acc + b.length, 0);
+            if (totalSamples >= 22050 * 2.5) {
+              const merged = new Float32Array(totalSamples);
+              let offset = 0;
+              for (const b of buffer) {
+                merged.set(b, offset);
+                offset += b.length;
+              }
+              buffer = [];
+              
+              // Convert to 16-bit WAV PCM and send via WebSocket
+              const wavBlob = encodeWAV(merged, 22050);
+              wavBlob.arrayBuffer().then(buf => {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                  ws.send(buf);
+                }
+              });
+            }
+          };
+
+          source.connect(processor);
+          processor.connect(audioCtx.destination);
+          
+          isRecording = true;
+          micBtn.classList.add('recording');
+          micBtn.textContent = '⏹️ Oprește Microfon Live';
+        } catch (e) {
+          alert('Eroare acces microfon: ' + e.message);
+        }
+      }
+    });
+
+    function encodeWAV(samples, sampleRate) {
+      const buffer = new ArrayBuffer(44 + samples.length * 2);
+      const view = new DataView(buffer);
+      function writeString(view, offset, string) {
+        for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
+      }
+      writeString(view, 0, 'RIFF');
+      view.setUint32(4, 36 + samples.length * 2, true);
+      writeString(view, 8, 'WAVE');
+      writeString(view, 12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, 1, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      writeString(view, 36, 'data');
+      view.setUint32(40, samples.length * 2, true);
+      let offset = 44;
+      for (let i = 0; i < samples.length; i++) {
+        const s = Math.max(-1, Math.min(1, samples[i]));
+        view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+        offset += 2;
+      }
+      return new Blob([view], { type: 'audio/wav' });
+    }
+  </script>
+</body>
+</html>
