@@ -72,8 +72,8 @@ public class MainActivity extends Activity {
         // Request runtime microphone permission
         checkMicrophonePermission();
 
-        // Load Bedside Sentinel screen
-        webView.loadUrl("file:///android_asset/bedside_sentinel_mode/code.html");
+        // Load Bedside Sentinel screen (Unified Simple & Advanced Modes)
+        webView.loadUrl("file:///android_asset/index.html");
     }
 
     private void checkMicrophonePermission() {

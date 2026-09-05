@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        overscroll-behavior: none;
+        background-color: #090D16;
+      }
+      .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+      .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+      main > :first-child { margin-top: 0 !important; }
+      main > :last-child { margin-bottom: 0 !important; }
+    }
+    ::-webkit-scrollbar { display: none; }
+    .lux-card {
+      background: linear-gradient(180deg, rgba(19, 29, 49, 0.85) 0%, rgba(13, 20, 36, 0.9) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.12);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    }
+    .lux-subcard {
+      background: rgba(7, 14, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .gold-glow {
+      text-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-primary": "#3c2f00",
+            "text-secondary": "#94A3B8",
+            "inverse-primary": "#735c00",
+            "on-secondary": "#003731",
+            "surface-container-low": "#141b2c",
+            "on-surface": "#dce2f9",
+            "secondary-container": "#03c6b2",
+            "sapphire-surface": "#131D31",
+            "background": "#090D16",
+            "tertiary": "#93d7ff",
+            "on-tertiary": "#00354a",
+            "on-tertiary-fixed": "#001e2c",
+            "tertiary-fixed-dim": "#7bd0ff",
+            "surface": "#090D16",
+            "error-container": "#93000a",
+            "error": "#ffb4ab",
+            "tertiary-fixed": "#c4e7ff",
+            "surface-container-highest": "#2e3446",
+            "on-primary-container": "#554300",
+            "primary-container": "#d4af37",
+            "surface-container": "#131D31",
+            "tertiary-container": "#3bbffa",
+            "sapphire-elevated": "#18233C",
+            "clinical-alert": "#FF6B81",
+            "surface-bright": "#32394b",
+            "on-secondary-fixed": "#00201c",
+            "outline": "#99907c",
+            "primary-fixed": "#ffe088",
+            "primary-fixed-dim": "#e9c349",
+            "gold-dim": "#C5A059",
+            "gold-light": "#E2C974",
+            "inverse-on-surface": "#293041",
+            "celadon-mint": "#4ECCA3",
+            "secondary-fixed-dim": "#3cddc7",
+            "obsidian-base": "#090D16",
+            "on-background": "#dce2f9",
+            "surface-dim": "#0c1323",
+            "text-primary": "#F1F5F9",
+            "secondary": "#44e2cd",
+            "text-gold": "#E2C974",
+            "on-surface-variant": "#94A3B8",
+            "secondary-fixed": "#62fae3",
+            "on-secondary-container": "#004d44",
+            "on-primary-fixed": "#241a00",
+            "on-error-container": "#ffdad6",
+            "on-secondary-fixed-variant": "#005047",
+            "on-tertiary-fixed-variant": "#004c69",
+            "on-primary-fixed-variant": "#574500",
+            "surface-container-lowest": "#070e1e",
+            "outline-variant": "#4d4635",
+            "surface-container-high": "#1c263d",
+            "surface-tint": "#e9c349",
+            "midnight-slate": "#0D1424",
+            "on-error": "#690005",
+            "surface-variant": "#2e3446",
+            "inverse-surface": "#dce2f9",
+            "on-tertiary-container": "#004b67",
+            "primary": "#d4af37"
+          },
+          borderRadius: {
+            "DEFAULT": "0.375rem",
+            "lg": "0.625rem",
+            "xl": "0.875rem",
+            "2xl": "1.125rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            "body-sm": ["Inter", "sans-serif"],
+            "body-md": ["Inter", "sans-serif"],
+            "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+            "body-lg": ["Inter", "sans-serif"],
+            "telemetry-hero-mobile": ["JetBrains Mono", "monospace"],
+            "display-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+            "display-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "telemetry-val": ["JetBrains Mono", "monospace"],
+            "telemetry-hero": ["JetBrains Mono", "monospace"],
+            "label-caps": ["JetBrains Mono", "monospace"],
+            "label-sm": ["Inter", "sans-serif"]
+          },
+          fontSize: {
+            "body-sm": ["12px", { lineHeight: "18px", letterSpacing: "0.01em", fontWeight: "400" }],
+            "body-md": ["14px", { lineHeight: "22px", letterSpacing: "0.01em", fontWeight: "400" }],
+            "headline-sm": ["18px", { lineHeight: "24px", letterSpacing: "0em", fontWeight: "600" }],
+            "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }],
+            "body-lg": ["16px", { lineHeight: "26px", letterSpacing: "0em", fontWeight: "400" }],
+            "telemetry-hero-mobile": ["34px", { lineHeight: "38px", letterSpacing: "-0.02em", fontWeight: "600" }],
+            "display-lg-mobile": ["30px", { lineHeight: "36px", letterSpacing: "-0.01em", fontWeight: "700" }],
+            "telemetry-val": ["19px", { lineHeight: "22px", letterSpacing: "-0.02em", fontWeight: "500" }],
+            "label-caps": ["10px", { lineHeight: "12px", letterSpacing: "0.08em", fontWeight: "600" }],
+            "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.02em", fontWeight: "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-obsidian-base font-body-md text-body-md text-on-surface flex flex-col antialiased selection:bg-primary-container selection:text-on-primary">
+<!-- Fixed Top Header -->
+<header class="fixed top-0 w-full z-50 pt-safe bg-[#090D16]/90 backdrop-blur-xl border-b border-[#D4AF37]/10 shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
+<div class="h-16 px-4 flex items-center justify-between gap-3">
+<div class="flex items-center gap-3 min-w-0">
+<div class="relative flex-shrink-0">
+<img alt="NightDoc RespiSense Logo" class="h-9 w-9 object-contain rounded-xl p-0.5 border border-[#D4AF37]/25 bg-surface-container-low shadow-[0_0_12px_rgba(212,175,55,0.15)]" src="https://lh3.googleusercontent.com/aida/AEtjO1X7OTApZQns6Rpk8RLfJyaa4Q8072auZkX3eJPCFGyvaHHL2JooIRaNPsXSlvhQKZ44jzclKBjst7eJgx44EscscfsKMUZVP07AwS9597xvMAFqq9ncKjZZqgyrOePB8CunzGjlUT50vBco2RVYa8H6R8Udq0tn1Ij9F67NrIMXovsbeP5bFZgUo8YwXhG8PL3GFRoEEHQVbCBivA7NNQqLs1S_wNs9LfIF1Xm0n1myvh8_uhofhqFXuqNH"/>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-[17px] text-text-primary font-bold tracking-tight truncate">NightDoc</span>
+<span class="font-label-caps text-[9px] text-gold-light px-1.5 py-0.5 rounded bg-primary-container/15 border border-[#D4AF37]/30 tracking-widest font-semibold uppercase">AI</span>
+</div>
+<span class="font-label-caps text-[9px] text-[#94A3B8] truncate uppercase tracking-widest font-medium">Pulmonary Analytics</span>
+</div>
+</div>
+<div class="flex items-center gap-2.5 flex-shrink-0">
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container border border-celadon-mint/25 text-celadon-mint shadow-[0_0_8px_rgba(78,204,163,0.1)]">
+<span class="w-1.5 h-1.5 rounded-full bg-celadon-mint animate-pulse shadow-[0_0_6px_#4ECCA3]"></span>
+<span class="font-label-caps text-[9.5px] text-celadon-mint font-medium tracking-wide">Edge Active</span>
+</div>
+<button class="flex items-center justify-center p-0.5 rounded-full ring-1 ring-[#D4AF37]/40 hover:ring-[#D4AF37] focus:outline-none min-w-[36px] min-h-[36px] overflow-hidden transition-all shadow-[0_0_10px_rgba(212,175,55,0.2)]">
+<img alt="Specialist Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1UUnDj-0Ubsa-LLPUN-TV7Yu8QwsbycpK06Vb0IisWoLKSvcYrX4ZhT4pWcyHHMrL7Xbi36CEeQKYx2ZB3Vwqov6T-P0ZwKWxvmYkm1ZN5C80X__5q9BMZI4s7kCQf3Vg7oorESoh01T91e0PH-ydCBJuLEqU765r2HkAHudieAmWgnpDUHJ6RhSuB6fTWLz7-Uz09jIH4ks461HCaJTsnxWFaPQTCJnR1Z4zTgD9uJfpmPg4w7pqrsowjG"/>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Scrollable Content -->
+<main class="flex flex-col relative w-full pt-20 pb-28 min-h-screen px-4 gap-3.5 bg-gradient-to-b from-[#090D16] via-[#0D1424] to-[#090D16]">
+<!-- Patient / Subject Profile Header Card -->
+<div class="lux-card rounded-2xl p-4 flex items-center justify-between">
+<div class="flex items-center gap-3 min-w-0">
+<div class="flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-[#18233C] to-[#0F172A] border border-[#D4AF37]/25 text-gold-light flex-shrink-0 shadow-[0_0_12px_rgba(212,175,55,0.1)]">
+<span class="material-symbols-outlined text-[22px]">vital_signs</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-[16px] text-text-primary font-semibold truncate tracking-tight">Subject #8104-D</span>
+<span class="font-label-caps text-[9.5px] px-2 py-0.5 rounded bg-surface-container-high border border-white/5 text-gold-light uppercase tracking-wider font-semibold">Room 04-B</span>
+</div>
+<span class="font-label-sm text-[11px] text-text-secondary truncate mt-0.5">Overnight Monitoring • 22:00 – 06:00 (8h)</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FF6B81]/10 border border-[#FF6B81]/30 text-[#FF6B81] flex-shrink-0 shadow-[0_0_10px_rgba(255,107,129,0.15)]">
+<span class="w-2 h-2 rounded-full bg-[#FF6B81] animate-pulse"></span>
+<span class="font-label-caps text-[9.5px] font-semibold uppercase tracking-wider">Review Required</span>
+</div>
+</div>
+<!-- 3 Telemetry Metrics Grid -->
+<div class="grid grid-cols-3 gap-2.5">
+<!-- Cough Count Card -->
+<div class="lux-card rounded-xl p-3.5 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-[10px] text-text-secondary uppercase tracking-widest font-semibold">Coughs</span>
+<span class="material-symbols-outlined text-gold-light text-[18px]">pulmonology</span>
+</div>
+<div class="my-2.5">
+<span class="font-telemetry-hero-mobile text-telemetry-hero-mobile text-text-primary font-bold tracking-tight">42</span>
+<span class="block font-label-caps text-[9px] text-[#64748B] mt-0.5 tracking-wider uppercase">Events Total</span>
+</div>
+<div class="flex items-center gap-1 text-clinical-alert font-label-caps text-[9.5px] font-semibold">
+<span>+18% vs baseline</span>
+</div>
+</div>
+<!-- Risk Index Card -->
+<div class="lux-card rounded-xl p-3.5 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-[10px] text-text-secondary uppercase tracking-widest font-semibold">Risk Index</span>
+<span class="material-symbols-outlined text-clinical-alert text-[18px]">emergency</span>
+</div>
+<div class="my-2.5">
+<span class="font-telemetry-hero-mobile text-telemetry-hero-mobile text-clinical-alert font-bold tracking-tight">68</span>
+<span class="font-telemetry-val text-[14px] text-[#64748B] font-normal">/100</span>
+</div>
+<div class="text-clinical-alert font-label-caps text-[9.5px] font-semibold uppercase tracking-wider">
+          Moderate-High
+        </div>
+</div>
+<!-- Night Status Card -->
+<div class="lux-card rounded-xl p-3.5 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-[10px] text-text-secondary uppercase tracking-widest font-semibold">Night Status</span>
+<span class="material-symbols-outlined text-celadon-mint text-[18px]">bedtime</span>
+</div>
+<div class="my-2.5">
+<span class="font-headline-md text-[17px] text-text-primary font-semibold block leading-tight truncate">Disrupted</span>
+<span class="block font-label-caps text-[9px] text-[#64748B] mt-0.5 tracking-wider uppercase">145m Episode</span>
+</div>
+<div class="text-celadon-mint font-label-caps text-[9.5px] font-semibold">
+          Peak 03:15 AM
+        </div>
+</div>
+</div>
+<!-- 24h Cough Chronology Chart -->
+<div class="lux-card rounded-2xl p-4 flex flex-col gap-3">
+<div class="flex items-center justify-between border-b border-white/5 pb-2.5">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center text-gold-light">
+<span class="material-symbols-outlined text-[16px]">analytics</span>
+</div>
+<span class="font-headline-sm text-[15px] text-text-primary font-semibold">24h Cough Chronology</span>
+</div>
+<span class="font-label-caps text-[10px] text-gold-dim px-2 py-0.5 rounded bg-surface-container-lowest border border-[#D4AF37]/20 tracking-wider uppercase font-medium">LOINC 8687-6</span>
+</div>
+<div class="lux-subcard p-3 rounded-xl flex flex-col gap-2">
+<div class="flex items-center justify-between text-text-secondary text-label-sm font-label-sm">
+<span class="text-[11px] text-slate-300">Hourly Episode Distribution</span>
+<span class="text-[#FF6B81] text-[11px] font-medium tracking-tight">Surge window: 02:15 – 04:40 AM</span>
+</div>
+<svg class="w-full h-28 overflow-visible" fill="none" viewbox="0 0 320 100">
+<defs>
+<lineargradient id="goldBarGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#E2C974" stop-opacity="0.95"></stop>
+<stop offset="100%" stop-color="#997A25" stop-opacity="0.4"></stop>
+</lineargradient>
+<lineargradient id="alertBarGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#FF6B81" stop-opacity="1"></stop>
+<stop offset="100%" stop-color="#93000A" stop-opacity="0.6"></stop>
+</lineargradient>
+<lineargradient id="mintBarGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#4ECCA3" stop-opacity="0.9"></stop>
+<stop offset="100%" stop-color="#0F5B46" stop-opacity="0.3"></stop>
+</lineargradient>
+</defs>
+<!-- Grid Lines -->
+<line stroke="#1E293B" stroke-dasharray="2 2" stroke-width="0.75" x1="0" x2="320" y1="20" y2="20"></line>
+<line stroke="#1E293B" stroke-dasharray="2 2" stroke-width="0.75" x1="0" x2="320" y1="50" y2="50"></line>
+<line stroke="#334155" stroke-width="0.75" x1="0" x2="320" y1="75" y2="75"></line>
+<!-- Sleep Focus Background Highlight -->
+<rect fill="#D4AF37" fill-opacity="0.04" height="65" rx="6" stroke="#D4AF37" stroke-opacity="0.12" stroke-width="0.8" width="120" x="100" y="10"></rect>
+<!-- Bars before sleep -->
+<rect fill="url(#mintBarGrad)" height="8" rx="2" width="6" x="10" y="67"></rect>
+<rect fill="url(#mintBarGrad)" height="6" rx="2" width="6" x="24" y="69"></rect>
+<rect fill="url(#mintBarGrad)" height="12" rx="2" width="6" x="38" y="63"></rect>
+<rect fill="url(#mintBarGrad)" height="10" rx="2" width="6" x="52" y="65"></rect>
+<rect fill="url(#goldBarGrad)" height="16" rx="2" width="6" x="66" y="59"></rect>
+<rect fill="url(#goldBarGrad)" height="20" rx="2" width="6" x="80" y="55"></rect>
+<rect fill="url(#goldBarGrad)" height="28" rx="2" width="6" x="94" y="47"></rect>
+<!-- Surge & Peak Sleep Hours -->
+<rect fill="url(#goldBarGrad)" height="36" rx="2" width="6" x="108" y="39"></rect>
+<rect fill="url(#goldBarGrad)" height="46" rx="2" width="6" x="122" y="29"></rect>
+<rect fill="url(#alertBarGrad)" filter="drop-shadow(0px 0px 4px rgba(255,107,129,0.5))" height="60" rx="2.5" width="7" x="136" y="15"></rect>
+<rect fill="url(#alertBarGrad)" filter="drop-shadow(0px 0px 6px rgba(255,107,129,0.7))" height="65" rx="2.5" width="7" x="150" y="10"></rect>
+<rect fill="url(#alertBarGrad)" filter="drop-shadow(0px 0px 4px rgba(255,107,129,0.5))" height="56" rx="2.5" width="7" x="164" y="19"></rect>
+<!-- Morning Recovery Bars -->
+<rect fill="url(#goldBarGrad)" height="42" rx="2" width="6" x="178" y="33"></rect>
+<rect fill="url(#goldBarGrad)" height="26" rx="2" width="6" x="192" y="49"></rect>
+<rect fill="url(#mintBarGrad)" height="16" rx="2" width="6" x="206" y="59"></rect>
+<rect fill="url(#mintBarGrad)" height="12" rx="2" width="6" x="220" y="63"></rect>
+<rect fill="url(#mintBarGrad)" height="8" rx="2" width="6" x="234" y="67"></rect>
+<rect fill="url(#mintBarGrad)" height="6" rx="2" width="6" x="248" y="69"></rect>
+<rect fill="url(#mintBarGrad)" height="10" rx="2" width="6" x="262" y="65"></rect>
+<rect fill="url(#mintBarGrad)" height="8" rx="2" width="6" x="276" y="67"></rect>
+<rect fill="url(#mintBarGrad)" height="6" rx="2" width="6" x="290" y="69"></rect>
+<!-- Timeline Labels -->
+<text fill="#64748B" font-family="JetBrains Mono" font-size="8" x="10" y="90">18:00</text>
+<text fill="#E2C974" font-family="JetBrains Mono" font-size="8" font-weight="500" x="98" y="90">22:00 (Sleep)</text>
+<text fill="#FF6B81" font-family="JetBrains Mono" font-size="8" font-weight="700" x="146" y="90">03:15 Peak</text>
+<text fill="#64748B" font-family="JetBrains Mono" font-size="8" x="215" y="90">06:00 (Wake)</text>
+<text fill="#64748B" font-family="JetBrains Mono" font-size="8" x="285" y="90">10:00</text>
+</svg>
+</div>
+<div class="flex items-center justify-between text-body-sm text-text-secondary px-1 pt-0.5">
+<span class="text-body-sm text-[12px]">Peak nocturnal rate: <strong class="text-text-primary font-semibold">14 events/hr</strong></span>
+<span class="text-body-sm text-celadon-mint font-medium text-[12px] flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-celadon-mint inline-block"></span> Continuous Audio Monitored
+        </span>
+</div>
+</div>
+<!-- Biomarker Classification Breakdown -->
+<div class="lux-card rounded-2xl p-4 flex flex-col gap-3">
+<div class="flex items-center justify-between border-b border-white/5 pb-2.5">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-lg bg-celadon-mint/10 border border-celadon-mint/20 flex items-center justify-center text-celadon-mint">
+<span class="material-symbols-outlined text-[16px]">pie_chart</span>
+</div>
+<span class="font-headline-sm text-[15px] text-text-primary font-semibold">Biomarker Classification</span>
+</div>
+<span class="font-label-caps text-[10px] text-text-secondary uppercase tracking-wider font-semibold">42 Episodes</span>
+</div>
+<!-- Segmented Bar -->
+<div class="h-2 w-full rounded-full bg-surface-container-lowest flex overflow-hidden p-0.5 border border-white/5 shadow-inner">
+<div class="h-full bg-gradient-to-r from-gold-dim to-gold-light rounded-l-full" style="width: 62%"></div>
+<div class="h-full bg-celadon-mint mx-0.5" style="width: 28%"></div>
+<div class="h-full bg-[#FF6B81] rounded-r-full" style="width: 10%"></div>
+</div>
+<!-- Detail Grid -->
+<div class="grid grid-cols-3 gap-2 pt-1">
+<div class="lux-subcard p-2.5 rounded-xl flex flex-col gap-0.5">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-gold-light shadow-[0_0_6px_#E2C974]"></span>
+<span class="font-label-caps text-[9px] text-[#94A3B8] truncate uppercase tracking-wider font-semibold">Dry Parox.</span>
+</div>
+<span class="font-telemetry-val text-[18px] text-text-primary font-bold mt-1">62%</span>
+<span class="font-body-sm text-[11px] text-text-secondary">26 bursts</span>
+</div>
+<div class="lux-subcard p-2.5 rounded-xl flex flex-col gap-0.5">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-celadon-mint shadow-[0_0_6px_#4ECCA3]"></span>
+<span class="font-label-caps text-[9px] text-[#94A3B8] truncate uppercase tracking-wider font-semibold">Productive</span>
+</div>
+<span class="font-telemetry-val text-[18px] text-text-primary font-bold mt-1">28%</span>
+<span class="font-body-sm text-[11px] text-text-secondary">12 bursts</span>
+</div>
+<div class="lux-subcard p-2.5 rounded-xl flex flex-col gap-0.5">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-[#FF6B81] shadow-[0_0_6px_#FF6B81]"></span>
+<span class="font-label-caps text-[9px] text-[#94A3B8] truncate uppercase tracking-wider font-semibold">Wheezing</span>
+</div>
+<span class="font-telemetry-val text-[18px] text-[#FF6B81] font-bold mt-1">10%</span>
+<span class="font-body-sm text-[11px] text-text-secondary">4 episodes</span>
+</div>
+</div>
+</div>
+<!-- Azure AI Clinical Summary Card -->
+<div class="lux-card rounded-2xl p-4 flex flex-col gap-3">
+<div class="flex items-center justify-between border-b border-white/5 pb-2.5">
+<div class="flex items-center gap-2">
+<div class="flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 border border-[#D4AF37]/30 text-gold-light">
+<span class="material-symbols-outlined text-[16px]">clinical_notes</span>
+</div>
+<span class="font-headline-sm text-[15px] text-text-primary font-semibold tracking-tight">Azure AI Clinical Summary</span>
+</div>
+<span class="font-label-caps text-[9.5px] text-gold-light px-2.5 py-0.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/25 font-semibold tracking-wide">GPT-4o-mini</span>
+</div>
+<div class="lux-subcard p-3.5 rounded-xl flex flex-col gap-2.5">
+<ul class="list-none flex flex-col gap-2.5 text-body-sm text-slate-200">
+<li class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[#FF6B81] text-[16px] flex-shrink-0 mt-0.5">warning</span>
+<span class="text-[12.5px] leading-relaxed"><strong class="text-text-primary font-semibold">Nocturnal Spasms:</strong> Clustered paroxysmal cough with expiratory wheezing during REM cycles (peak 03:15 AM).</span>
+</li>
+<li class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-gold-light text-[16px] flex-shrink-0 mt-0.5">waves</span>
+<span class="text-[12.5px] leading-relaxed"><strong class="text-text-primary font-semibold">Acoustic Resonance:</strong> Frequency profiles indicate elevated small-airway resistance and bronchial constriction.</span>
+</li>
+<li class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-celadon-mint text-[16px] flex-shrink-0 mt-0.5">recommend</span>
+<span class="text-[12.5px] leading-relaxed"><strong class="text-text-primary font-semibold">Recommendation:</strong> Consider urgent clinical review of maintenance corticosteroid regimen.</span>
+</li>
+</ul>
+<div class="flex items-center justify-between pt-2.5 border-t border-white/5 text-label-sm text-text-secondary">
+<span class="text-[11px]">Confidence: <strong class="text-celadon-mint font-semibold">98.4%</strong></span>
+<span class="text-[11px]">Latency: 142ms • Local Edge Model</span>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="flex items-center justify-between gap-3 pt-1">
+<div class="flex items-center gap-1.5 text-text-secondary">
+<span class="material-symbols-outlined text-celadon-mint text-[16px]">check_circle</span>
+<span class="font-label-caps text-[9.5px] text-[#94A3B8] uppercase tracking-wider font-semibold">HL7 FHIR R4 Ready</span>
+</div>
+<button class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#D4AF37] via-[#E2C974] to-[#C5A059] text-[#241A00] hover:brightness-110 font-bold font-label-caps text-[10px] tracking-wider uppercase shadow-[0_2px_14px_rgba(212,175,55,0.3)] active:scale-[0.98] transition-all" id="fhirExportBtn" onclick="triggerFhirExport()">
+<span class="material-symbols-outlined text-[16px] font-bold">ios_share</span>
+<span>EXPORT FHIR REPORT</span>
+</button>
+</div>
+</div>
+<!-- Toast Notification -->
+<div class="hidden fixed bottom-20 left-4 right-4 z-50 p-3.5 rounded-xl bg-gradient-to-r from-[#18233C] to-[#0D1424] text-text-primary border border-celadon-mint/40 shadow-[0_8px_32px_rgba(0,0,0,0.8)] flex items-center justify-between transition-all duration-300 backdrop-blur-xl" id="toastNotification">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-celadon-mint text-[20px]">cloud_done</span>
+<span class="font-body-sm text-[12.5px] font-medium text-slate-100" id="toastMessage">FHIR R4 Diagnostic Report Dispatched</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-slate-400 hover:text-white cursor-pointer" onclick="closeToast()">close</span>
+</div>
+</main>
+<!-- Interactive script unchanged -->
+<script>
+    function triggerFhirExport() {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMessage');
+      toastMsg.innerText = "FHIR R4 DiagnosticReport Dispatched (ID: #8104-D)";
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3800);
+    }
+
+    function closeToast() {
+      document.getElementById('toastNotification').classList.add('hidden');
+    }
+  </script>
+<!-- Fixed Luxury Nocturnal Bottom Navigation -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-[#090D16]/90 backdrop-blur-xl border-t border-[#D4AF37]/15 shadow-[0_-4px_24px_rgba(0,0,0,0.7)]" data-active-classes="text-gold-light fill-current relative after:content-[''] after:absolute after:bottom-1 after:w-1 after:h-1 after:bg-[#D4AF37] after:rounded-full after:shadow-[0_0_8px_#D4AF37]">
+<div class="flex justify-around items-center h-16 px-1">
+<a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] py-1 text-slate-400 hover:text-slate-200 transition-all duration-200" data-path="sentinel" href="#">
+<span class="material-symbols-outlined text-[21px]">radar</span>
+<span class="font-label-caps text-[9px] tracking-wider uppercase">Sentinel</span>
+</a>
+<a aria-current="page" class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] py-1 text-gold-light fill-current relative after:content-[''] after:absolute after:bottom-1.5 after:w-1.5 after:h-1.5 after:bg-primary after:rounded-full after:shadow-[0_0_10px_#D4AF37] transition-all duration-200" data-path="analytics" href="#">
+<span class="material-symbols-outlined text-[21px]">stacked_line_chart</span>
+<span class="font-label-caps text-[9px] tracking-wider uppercase font-semibold text-gold-light">Analytics</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] py-1 text-slate-400 hover:text-slate-200 transition-all duration-200" data-path="environment" href="#">
+<span class="material-symbols-outlined text-[21px]">air</span>
+<span class="font-label-caps text-[9px] tracking-wider uppercase">Ambient</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] py-1 text-slate-400 hover:text-slate-200 transition-all duration-200" data-path="efficacy" href="#">
+<span class="material-symbols-outlined text-[21px]">medication</span>
+<span class="font-label-caps text-[9px] tracking-wider uppercase">Efficacy</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] py-1 text-slate-400 hover:text-slate-200 transition-all duration-200" data-path="edge-iot" href="#">
+<span class="material-symbols-outlined text-[21px]">memory</span>
+<span class="font-label-caps text-[9px] tracking-wider uppercase">Edge IoT</span>
+</a>
+</div>
+</nav>
+</body></html>
