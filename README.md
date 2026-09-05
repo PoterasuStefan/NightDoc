@@ -1,24 +1,25 @@
-<div align="center">
+﻿<div align="center">
 
-# 🌐 SoundSight
-### Real-Time 360° Acoustic Radar & Assistive Hearing AI
+# 🌙 NightDoc / RespiSense AI
+### Continuous Bedside Acoustic Biomarker Sentinel & Clinical Research Telemetry
+#### *Developed for the Microsoft Hackathon (Health & Research Track)*
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![ONNX Runtime](https://img.shields.io/badge/ONNX_Runtime-Edge_AI-005CED?style=for-the-badge&logo=onnx&logoColor=white)](https://onnxruntime.ai/)
 [![Microsoft Azure](https://img.shields.io/badge/Microsoft_Foundry-Azure_AI-0078D4?style=for-the-badge&logo=microsoft-azure&logoColor=white)](https://ai.azure.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![HL7 FHIR R4](https://img.shields.io/badge/HL7_FHIR-R4_Standards-E11D48?style=for-the-badge)](https://hl7.org/fhir/)
 
 <p align="center">
-  <b>SoundSight</b> transforms spatial acoustic awareness for the deaf and hard of hearing by combining an interactive 360° directional sound radar with edge ONNX audio classification and Microsoft Foundry cloud speech understanding.
+  <b>NightDoc (RespiSense AI)</b> is a privacy-first, non-invasive acoustic biomarker sentinel for clinical research and nocturnal respiratory disease monitoring (Asthma, COPD, Sleep Apnea, Pediatric Distress). It combines ultra-fast on-device <b>Microsoft ONNX Runtime</b> inference with <b>HL7 FHIR R4</b> clinical standardization and <b>Azure AI Foundry</b> synthesis.
 </p>
 
 [✨ Key Features](#-key-features) •
-[🏛️ Architecture](#️-architecture) •
+[🏛️ System Architecture](#️-system-architecture) •
+[🏥 Medical Standards & FHIR](#-medical-standards--fhir) •
 [🚀 Quick Start](#-quick-start) •
 [📱 Mobile Setup](#-mobile-setup) •
-[🔐 Configuration](#-configuration) •
-[📦 Project Structure](#-project-structure)
+[🔐 Configuration](#-configuration)
 
 ---
 
@@ -26,164 +27,137 @@
 
 ## 🌟 Key Features
 
-### 1. 🎯 360° Directional Acoustic Radar (Stand-by Mode)
-- **High-Performance Canvas Visualizer**: 60 FPS HTML5 Canvas radiating radial spectrogram waves around a central circular interface.
-- **TDoA (Time Difference of Arrival) Localization**: Cross-correlation sound localization calculating phase lag $\Delta t = \frac{d \cdot \sin(\theta)}{c}$ between microphone capsules.
-- **Flat Chevron Directional Pointer**: Sleek non-overlapping indicator dynamically pointing toward sound bursts.
-- **Ambient Chatter & Background Noise Filtering**: Suppresses false alarm popups during normal room chatter while rendering subtle ambient waveforms.
+### 1. 🫁 Real-Time Acoustic Biomarker Detection (Edge ONNX Runtime)
+- Runs lightweight multi-label convolutional neural network in **<10ms on CPU/NPU**.
+- **100% Privacy-Preserving (HIPAA Compliant):** Audio waveforms are converted to Mel-spectrograms in-memory, classified locally, and immediately purged. Zero raw voice recordings are transmitted to the cloud.
+- Classifies 7 distinct acoustic biomarker categories:
+  - 🫁 **Paroxysmal Coughing** (Cough count & frequency)
+  - 🌬️ **Breathing & Wheezing** (Respiratory cycle pattern)
+  - 💤 **Snoring & Obstructive Sleep Apnea Risk**
+  - 🤧 **Sneezing Reflex**
+  - 👶 **Pediatric & Neonatal Distress** (Infant crying)
+  - 💬 **Speech & Conversation** (Ambient dialogue)
+  - 🍃 **Ambient Baseline** (Calibrated silence)
 
-### 2. ⚡ Edge AI Sound Classifier (Local ONNX Model)
-- Ultra-lightweight (**~360 KB**) local model running on CPU with zero cloud latency.
-- Multi-label classification across **8 distinct acoustic classes**:
-  - 👶 **Crying Baby** (Infant distress)
-  - 🚑 **Emergency Siren** (Ambulance / Fire alarm)
-  - 🚗 **Car Horn Blast** (Traffic warning)
-  - 🐕 **Dog Bark** (Canine alert)
-  - 🚪 **Door Knock** (Wood impact tap)
-  - 👏 **Applause / Clapping** (Hand claps)
-  - 💬 **Speech / Conversation** (Human dialogue)
-  - 🍃 **Ambient Noise** (Background room noise)
-- **Live Top-3 Confidence HUD**: Real-time sorted probability bars updating on every audio chunk.
+### 2. 🏥 Native HL7 FHIR R4 & Azure Health Data Services Ingestion
+- Every detected biomarker event is transformed on-the-fly into an **HL7 FHIR R4 `Observation`** resource.
+- Standardized medical coding:
+  - **LOINC:** `8687-6` (Coughing), `9279-1` (Respiratory Rate), `93832-4` (Sleep disturbance).
+  - **SNOMED-CT:** `263731006` (Coughing finding), `56018004` (Wheezing finding), `271600006` (Snoring finding), `271633008` (Infant distress).
+- Exports transaction bundles ready for **Azure Health Data Services (FHIR Server)** and hospital EHR systems.
 
-### 3. 💬 Conversation Mode & Microsoft Foundry Subtitles
-- **Instant Attention Trigger**: When human speech is detected, the *Conversation Mode* switcher lights up in vibrant Microsoft Emerald with a dynamic bounce animation.
-- **Live Multilingual Captions**: Real-time speech transcription (Romanian `ro-RO` & English) with typing cursor and finalized conversation bubbles.
-- **Microsoft Foundry & Azure AI Integration**: Powered by Azure AI Content Understanding and Azure Speech SDK.
-- **Speaker Orientation Tracker**: Displays active compass bearing of the speaker (e.g., `Speaker at 60° (on your right)`).
+### 3. 🤖 Microsoft Azure AI Foundry Clinical Synthesis
+- Evaluates nocturnal telemetry clusters (e.g., paroxysmal cough frequency per hour) via **Azure OpenAI (GPT-4o-mini)**.
+- Computes an **Exacerbation Risk Index (0-100)** and generates clinical summaries with actionable pulmonology recommendations.
+- Integrates **Azure Speech Services** for hands-free patient distress communication.
+
+### 4. 🌙 Dual Mode Bedside & Clinical Portal
+- **Bedside Patient Sentinel Mode:** Minimalist, dark-mode screen designed for nighttime with zero visual distraction, displaying real-time acoustic radial pulses and privacy verification.
+- **Clinical Research Dashboard:** Comprehensive telemetry panel with cough chronologies, nocturnal disturbance charts, FHIR JSON viewer, and Azure report generator.
 
 ---
 
-## 🏛️ Architecture
+## 🏛️ System Architecture
 
 ```mermaid
 graph TD
-    A[Microphone / Audio Stream] --> B[Web Audio API Engine]
-    B -->|PCM 16-bit WAV Chunks| C[WebSocket /ws/acoustic]
+    A[Bedside Microphone / Smartphone] -->|Web Audio API PCM| B[WebSocket /ws/acoustic]
     
-    subgraph Backend Engine
-        C --> D[Audio Preprocessing & Mel-Spectrogram]
-        D --> E[TDoA Cross-Correlation Engine]
-        D --> F[Local ONNX Model Inference]
-        F --> G{Class Detected?}
-        G -->|Alert: Baby, Siren, Horn, etc.| H[Broadcast Directional Alert]
-        G -->|Background / Chatter| I[Broadcast Ambient Waveform]
-        G -->|Speech / Conversation| J[Azure Foundry Speech Transcription]
+    subgraph Edge AI Sentinel (Local Machine / Mobile)
+        B --> C[Audio Preprocessor & Mel-Spectrogram]
+        C --> D[Microsoft ONNX Runtime Engine]
+        D -->|~10ms Inference| E{Biomarker Detected?}
+        E -->|Cough, Snore, Wheeze, Distress| F[HL7 FHIR R4 Observation Formatter]
+        E -->|Normal Ambient Baseline| G[Live Telemetry Stream]
     end
     
-    H --> K[Frontend Radar & Live Top-3 HUD]
-    I --> K
-    J --> L[Conversation Mode Live Subtitles]
+    subgraph Microsoft Cloud & Clinical Ecosystem
+        F --> H[Azure Health Data Services FHIR Server]
+        F --> I[Azure AI Foundry / OpenAI GPT-4o-mini]
+        I --> J[Physician Clinical Synthesis Report]
+    end
+    
+    F --> K[Frontend Bedside Sentinel & Clinical Dashboard]
+    J --> K
+```
+
+---
+
+## 🏥 Medical Standards & FHIR
+
+Each observation is structured as a valid FHIR R4 resource:
+```json
+{
+  "resourceType": "Observation",
+  "status": "final",
+  "category": [{ "coding": [{ "code": "exam", "display": "Exam" }] }],
+  "code": {
+    "coding": [
+      { "system": "http://snomed.info/sct", "code": "263731006", "display": "Coughing (finding)" },
+      { "system": "http://loinc.org", "code": "8687-6", "display": "Coughing [PhenX]" }
+    ]
+  },
+  "subject": { "reference": "Patient/PATIENT-RESPISENSE-001" },
+  "device": { "reference": "Device/DEVICE-ONNX-EDGE-01" },
+  "valueQuantity": { "value": 99.9, "unit": "%" },
+  "interpretation": [{ "coding": [{ "code": "A", "display": "Abnormal / Clinical Alert" }] }]
+}
 ```
 
 ---
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- Python 3.10 or newer
-- Microphone access (built-in, USB stereo, or smartphone)
-
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/PoterasuStefan/SoundSight.git
-cd SoundSight
+git clone https://github.com/PoterasuStefan/NightDoc.git
+cd NightDoc
 ```
 
-### 2. Install Dependencies
+### 2. Install Python Dependencies
 ```bash
 pip install -r backend/requirements.txt
 ```
 
-### 3. Launch the Server
+### 3. Launch the Application Server
 ```bash
 python backend/main.py
 ```
 
 ### 4. Open in Browser
-Open your browser and navigate to:
-👉 **[http://localhost:8000](http://localhost:8000)**
+👉 **[http://localhost:8000](http://localhost:8000)**  
+👉 **API Swagger Docs:** `http://localhost:8000/docs`
 
 ---
 
 ## 📱 Mobile Setup
 
-You can run SoundSight directly on your smartphone over local Wi-Fi:
-
-1. Connect your phone to the **same Wi-Fi network** as your computer.
-2. The server prints your local network IP upon startup:
-   ```text
-   [*] Local PC:    http://localhost:8000
-   [*] Phone (LAN): http://192.168.1.xxx:8000
-   ```
-3. Open Chrome or Safari on your phone and go to `http://192.168.1.xxx:8000`.
-4. **Install as PWA**: Tap Chrome's menu (`⋮`) $\rightarrow$ **Add to Home screen** (*Instalează aplicația*).
-5. Tap **Mic Live** and test real-time directional sound alerts anywhere in the room!
-
-> [!TIP]
-> **Mobile Microphone Permission over LAN**: In Chrome on Android, if `http://` blocks the microphone, enable the flag: `chrome://flags/#unsafely-treat-insecure-origin-as-secure`, add your PC's IP address (`http://192.168.1.xxx:8000`), and relaunch.
+You can run NightDoc at the bedside on any smartphone over local Wi-Fi:
+1. Connect your phone to the same Wi-Fi network as your computer.
+2. The server displays your LAN IP on startup (e.g. `http://192.168.1.xxx:8000`).
+3. Open the link on Chrome / Safari and tap **Mic Live** to start nocturnal acoustic monitoring.
 
 ---
 
 ## 🔐 Configuration
 
-SoundSight is pre-configured with a secure environment template for Microsoft Foundry.
-
-1. Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-2. Open `.env` and add your Azure AI / Microsoft Foundry credentials:
-   ```env
-   # Microsoft Foundry & Azure AI Services
-   AZURE_AI_API_KEY=your_actual_azure_api_key_here
-   AZURE_AI_ENDPOINT=https://stefanpoterasu-2164-resource.cognitiveservices.azure.com/
-   AZURE_AI_REGION=eastus
-   AZURE_CONTENT_UNDERSTANDING_ANALYZER=conversation-analyzer
-   AZURE_SPEECH_LANGUAGE=ro-RO
-   ```
-
-*(Note: `.env` is automatically ignored by `.gitignore` to keep your API keys 100% private).*
-
----
-
-## 📦 Project Structure
-
-```text
-SoundSight/
-├── backend/
-│   ├── sound_radar_model.onnx   # Trained lightweight ONNX acoustic classifier (~360 KB)
-│   ├── classifier.py            # ONNX inference, Mel-Spectrogram & TDoA Cross-Correlation
-│   ├── azure_foundry.py         # Microsoft Foundry & Azure Speech SDK integration
-│   ├── main.py                  # FastAPI WebSocket & REST application server
-│   └── requirements.txt         # Python dependencies
-├── js/
-│   ├── radar.js                 # 360° Radial Canvas Visualizer & Chevron arrow engine
-│   ├── audio.js                 # Web Audio API PCM capture & volume energy meter
-│   ├── websocket.js             # Resilient WebSocket client with auto-reconnect
-│   └── app.js                   # Application state, HUD controller, Speech Subtitles
-├── index.html                   # Microsoft Fluent Dark single-page interface
-├── styles.css                   # Acrylic Glassmorphism, animations & responsive styling
-├── .env.example                 # Secure environment template for Microsoft Foundry
-├── .gitignore                   # Ignores .env, Python caches, and raw training datasets
-└── README.md                    # Project documentation
+Copy `.env.example` to `.env` to configure Microsoft Azure credentials:
+```bash
+cp .env.example .env
+```
+```env
+AZURE_AI_API_KEY=your_actual_azure_api_key_here
+AZURE_AI_ENDPOINT=https://stefanpoterasu-2164-resource.cognitiveservices.azure.com/
+AZURE_AI_REGION=eastus
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+AZURE_SPEECH_LANGUAGE=ro-RO
 ```
 
 ---
 
-## 🧪 Testing with Simulator
-
-SoundSight includes a built-in **Sound Event Simulator**:
-1. Click **`⚡ Simulate`** in the top-right corner.
-2. Select any acoustic event (e.g., *Crying Baby*, *Emergency Siren*, *Door Knock*, *Car Horn*, *Speech*).
-3. Use the **360° manual angle slider** to test directional radar positioning across all quadrants.
-4. Upload any `.wav` or `.mp3` file to test the ONNX classifier with real-world audio samples!
-
----
-
 ## 📄 License
-
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License**.
 
 <div align="center">
-  <sub>Developed with ❤️ for accessibility and real-time acoustic intelligence.</sub>
+  <sub>RespiSense AI / NightDoc – Microsoft Hackathon Health & Research.</sub>
 </div>
