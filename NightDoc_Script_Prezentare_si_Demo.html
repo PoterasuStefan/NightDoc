@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>NightDoc AI – Script Prezentare & Live Demo (5 Minute)</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 12mm 14mm 12mm 14mm;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    background: #ffffff;
+    line-height: 1.5;
+    font-size: 10pt;
+  }
+  .header {
+    border-bottom: 2.5px solid #0f172a;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .header-left h1 {
+    font-size: 18pt;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+  }
+  .header-left .subtitle {
+    font-size: 10.5pt;
+    font-weight: 600;
+    color: #b45309;
+    margin-top: 1px;
+  }
+  .header-right {
+    text-align: right;
+    font-size: 8.5pt;
+    color: #64748b;
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    font-size: 8pt;
+    font-weight: 700;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-gold { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+  .badge-blue { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+  .badge-green { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+
+  .timeline-bar {
+    display: flex;
+    background: #f1f5f9;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    border: 1px solid #cbd5e1;
+    font-size: 8.5pt;
+    font-weight: 700;
+    text-align: center;
+  }
+  .timeline-seg-1 { width: 50%; background: #e2e8f0; color: #334155; padding: 5px 0; border-right: 1px solid #cbd5e1; }
+  .timeline-seg-2 { width: 40%; background: #dbeafe; color: #1e40af; padding: 5px 0; border-right: 1px solid #cbd5e1; }
+  .timeline-seg-3 { width: 10%; background: #fef3c7; color: #92400e; padding: 5px 0; }
+
+  .section-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .section-header {
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 7px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .section-title {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-body {
+    padding: 10px 12px;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: 85px 1fr;
+    gap: 4px 10px;
+    font-size: 9pt;
+    margin-bottom: 8px;
+    background: #f8fafc;
+    padding: 6px 10px;
+    border-radius: 5px;
+    border-left: 3px solid #0284c7;
+  }
+  .meta-label { font-weight: 700; color: #475569; }
+  .meta-value { color: #0f172a; }
+
+  .speech-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 3px solid #b45309;
+    padding: 8px 12px;
+    border-radius: 0 5px 5px 0;
+    font-size: 9.5pt;
+    color: #0f172a;
+    line-height: 1.55;
+  }
+  .speech-box strong { color: #0f172a; }
+  .speech-box em { color: #b45309; font-style: italic; }
+
+  .action-box {
+    background: #eff6ff;
+    border: 1px dashed #3b82f6;
+    padding: 6px 10px;
+    border-radius: 5px;
+    margin-top: 6px;
+    margin-bottom: 4px;
+    font-size: 8.5pt;
+    color: #1e40af;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .action-tag {
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 7.5pt;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+
+  .footer-note {
+    margin-top: 10px;
+    padding-top: 6px;
+    border-top: 1px solid #e2e8f0;
+    font-size: 8pt;
+    color: #64748b;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>NightDoc AI</h1>
+    <div class="subtitle">Script Oficial de Prezentare & Live Demo • 5 Minute Fix</div>
+  </div>
+  <div class="header-right">
+    <div><strong>Echipa:</strong> Alexia M., Ștefan P., Ana-Maria R., Matei A., Marius C.</div>
+    <div><strong>Track:</strong> Microsoft AI • Health & Research Track</div>
+  </div>
+</div>
+
+<div class="timeline-bar">
+  <div class="timeline-seg-1">Partea I: Pitch Slide-uri (2:30 min)</div>
+  <div class="timeline-seg-2">Partea II: Live Demo Aplicație (2:00 min)</div>
+  <div class="timeline-seg-3">Concluzie (0:30)</div>
+</div>
+
+<!-- SECTION 1 -->
+<div class="section-card">
+  <div class="section-header">
+    <div class="section-title">
+      <span class="badge badge-gold">0:00 – 0:40</span>
+      <span>1. Hook-ul & Problema Nevăzută: Cele 8 Ore Oarbe</span>
+    </div>
+    <span class="badge badge-blue">Slide 1, 2, 3</span>
+  </div>
+  <div class="section-body">
+    <div class="meta-grid">
+      <div class="meta-label">Slide-uri:</div>
+      <div class="meta-value">Slide 1 (Cover NightDoc) ➔ Slide 2/3 (8 Hours of Unmonitored Airway)</div>
+      <div class="meta-label">Obiectiv:</div>
+      <div class="meta-value">Setează gravitatea problemei clinice și captivează imediat comisia medicală.</div>
+    </div>
+    <div class="speech-box">
+      „Bună ziua tuturor! Numele meu este Ștefan și, alături de echipa mea, am pornit de la o realitate dură pe care orice medic pneumolog o cunoaște: <strong>Ce se întâmplă cu un pacient respirator vulnerabil în cele 8 ore în care doarme?</strong><br><br>
+      Noaptea este cel mai periculos punct orb din medicină. La bolnavii de astm sever, BPOC sau la bebeluși cu bronșiolită, căile aeriene se îngustează critic între orele 2:00 și 4:00 dimineața. În spitale, pe tura de noapte, o asistentă are adesea în grijă 10-15 pacienți — nu poate fi peste tot. Iar acasă, pacienții sunt complet singuri.<br><br>
+      Decompensarea respiratorie nu apare din senin: plămânul dă semnale acustice clare — spasme de tuse, wheezing șuierat — cu <strong>24 până la 48 de ore înainte de o criză acută</strong>. Doar că noaptea... nimeni nu ascultă aceste semnale.”
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2 -->
+<div class="section-card">
+  <div class="section-header">
+    <div class="section-title">
+      <span class="badge badge-gold">0:40 – 1:30</span>
+      <span>2. Inovația: Arhitectura Hibridă Dual-Tier & Zero-Retention</span>
+    </div>
+    <span class="badge badge-blue">Slide 4, 5, 6</span>
+  </div>
+  <div class="section-body">
+    <div class="meta-grid">
+      <div class="meta-label">Slide-uri:</div>
+      <div class="meta-value">Slide 4 (Dual-Tier Hybrid) ➔ Slide 5 (Edge Engine) ➔ Slide 6 (Volatile RAM)</div>
+      <div class="meta-label">Obiectiv:</div>
+      <div class="meta-value">Demonstrează securitatea de fier (fără stocare audio) și latența de 0.62ms.</div>
+    </div>
+    <div class="speech-box">
+      „Aici intervine <strong>NightDoc AI</strong>. Însă când spui că pui un microfon în dormitorul unui om sau la capul bolnavului în spital, apare frica justificată de supraveghere: <em>«Cine îmi ascultă conversațiile intime?»</em>.<br><br>
+      Inovația noastră cheie rezolvă exact această dilemă printr-o <strong>Arhitectură Hibridă Dual-Tier</strong>:<br>
+      <strong>Tier 1 este 100% Edge, local pe dispozitiv.</strong> Nu trimitem niciun milisecundă de audio brut în cloud. Algoritmul nostru neural analizează unda sonoră direct în memoria RAM volatilă la o viteză de <strong>0.62 milisecunde</strong>, după care sunetul este <strong>șters instantaneu (retenție 0.0 ms)</strong>. Este o barieră fizică de securitate aliniată la HIPAA și GDPR — nu există fișiere audio de interceptat.<br><br>
+      <strong>Tier 2 este Cloud-ul Microsoft Azure AI</strong>, care primește doar metadate numerice anonimizate, fără voce, pentru sinteză clinică asistențială și integrare directă în fișa pacientului prin standardul internațional <strong>HL7 FHIR R4</strong>.”
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3 -->
+<div class="section-card">
+  <div class="section-header">
+    <div class="section-title">
+      <span class="badge badge-gold">1:30 – 2:20</span>
+      <span>3. Cauzalitate Ambientală, Rigoare & Responsible AI</span>
+    </div>
+    <span class="badge badge-blue">Slide 7, 8, 9, 10</span>
+  </div>
+  <div class="section-body">
+    <div class="meta-grid">
+      <div class="meta-label">Slide-uri:</div>
+      <div class="meta-value">Slide 7 (Environmental Causality) ➔ Slide 8 (FHIR) ➔ Slide 9 (Validation) ➔ Slide 10 (Resp. AI)</div>
+      <div class="meta-label">Obiectiv:</div>
+      <div class="meta-value">Explică valoarea medicală, datele reale de testare (92.6%) și face puntea către demo.</div>
+    </div>
+    <div class="speech-box">
+      „Dar NightDoc nu se oprește la a număra tusea. Noi căutăm <strong>cauzalitatea</strong>. Corelăm spasmele cu microclimatul din cameră: dacă umiditatea scade sub 36%, tusea crește de 3 ori, iar sistemul poate activa preventiv un umidificator inteligent, stopând criza înainte să înceapă.<br><br>
+      Am validat modelul pe un set de date clinic separat de 432 de segmente, atingând <strong>92.6% acuratețe generală</strong> și <strong>0% confuzii pe vorbire</strong>. Respectăm integral cei 6 piloni <strong>Microsoft Responsible AI</strong>: suntem un sistem de suport decizional, cu medicul în buclă (<em>Human-in-the-Loop</em>).<br><br>
+      Dar cel mai important: <strong>NightDoc AI nu este o teorie pe un slide, este o aplicație nativă gata compilată.</strong> Haideți să o vedem live!”
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: DEMO LIVE -->
+<div class="section-card" style="border: 2px solid #2563eb;">
+  <div class="section-header" style="background: #eff6ff;">
+    <div class="section-title">
+      <span class="badge badge-green">2:20 – 4:20</span>
+      <span style="color: #1e40af;">4. DEMO LIVE PE APLICAȚIA MOBILĂ (2 MINUTE)</span>
+    </div>
+    <span class="badge badge-purple">Ecran Telefon / Live Screen</span>
+  </div>
+  <div class="section-body">
+
+    <!-- Substep A -->
+    <div style="margin-bottom: 10px;">
+      <div class="action-box">
+        <span class="action-tag">Pasul 1 • 2:20 – 2:50</span>
+        <span>Arăți ecranul Sentinel (Simple Mode). Vorbești în șoaptă / liniște pentru a arăta poarta de 60 dB.</span>
+      </div>
+      <div class="speech-box">
+        „Priviți ecranul aplicației noastre native. Cât timp este liniște în cameră sau vorbim în șoaptă, decibelmetrul e sub 60 dB, iar indicatorul arată <strong>`Gate: 60 dB (Standby)`</strong>. Modelul nu consumă baterie, bara de <em>Ambient Silence</em> este la 100%, iar procesorul stă în mod economic.”
+      </div>
+    </div>
+
+    <!-- Substep B -->
+    <div style="margin-bottom: 10px;">
+      <div class="action-box">
+        <span class="action-tag">Pasul 2 • 2:50 – 3:20</span>
+        <span>Vorbești la volum normal de prezentare. Arăți bara mov vibrantă de Speech & Voice care se aprinde.</span>
+      </div>
+      <div class="speech-box">
+        „Acum, când încep să vă vorbesc la volum normal de prezentare... <em>(arăți ecranul)</em> ...observați cum bara violet intens <strong>Speech & Voice</strong> se aprinde imediat, iar starea devine <em>Speech Activity</em>. Deși vorbesc mult în cameră, algoritmul știe că este voce umană și refuză categoric să dea alerte false de tuse!”
+      </div>
+    </div>
+
+    <!-- Substep C -->
+    <div style="margin-bottom: 10px;">
+      <div class="action-box">
+        <span class="action-tag">Pasul 3 • 3:20 – 3:45</span>
+        <span>Tușești scurt și apăsat de 2 ori în microfon („Kh-kh!”). Arăți saltul barei de tuse și vibrația.</span>
+      </div>
+      <div class="speech-box">
+        „Iar acum, dacă pacientul are un spasm nocturn... <em>(tușești scurt de 2 ori)</em> ...priviți: instantaneu, în <strong>0.6 milisecunde</strong>, bara coral de <strong>Coughing</strong> a sărit peste 80%, starea s-a schimbat în <em>Coughing Episode</em>, iar telefonul a vibrat pentru confirmare imediată!”
+      </div>
+    </div>
+
+    <!-- Substep D -->
+    <div>
+      <div class="action-box">
+        <span class="action-tag">Pasul 4 • 3:45 – 4:20</span>
+        <span>Comuți în tab-ul Ambient (apeși pe butonul umidificatorului), apoi treci în Analytics și apeși EXPORT FHIR REPORT.</span>
+      </div>
+      <div class="speech-box">
+        „Trecem în tab-ul <strong>Ambient</strong>: vedem senzorii de temperatură și umiditate culeși în timp real. Cu un simplu tap activăm umidificatorul inteligent — butonul devine verde <em>Humidifier Running</em>.<br><br>
+        Iar când medicul are nevoie de raport, mergem în <strong>Analytics</strong> și apăsăm <strong>EXPORT FHIR REPORT</strong>... <em>(apeși butonul auriu)</em> ...notificarea verde confirmă, iar fișierul `NightDoc_FHIR_Report.json` s-a descărcat fizic pe telefon, gata de sincronizat în sistemul spitalului.”
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SECTION 5 -->
+<div class="section-card">
+  <div class="section-header">
+    <div class="section-title">
+      <span class="badge badge-gold">4:20 – 5:00</span>
+      <span>5. Concluzia de Impact & Fezabilitate</span>
+    </div>
+    <span class="badge badge-blue">Slide 11 (Feasibility)</span>
+  </div>
+  <div class="section-body">
+    <div class="speech-box">
+      „În concluzie, NightDoc AI demonstrează trei avantaje decisive:<br>
+      1. <strong>Inovație arhitecturală:</strong> Edge AI cu zero retenție de date audio brute, protejând intimitatea prin construcție.<br>
+      2. <strong>Rigoare clinică:</strong> Latență de sub un milisecundă, 92.6% acuratețe și interoperabilitate FHIR nativă.<br>
+      3. <strong>Fezabilitate imediată:</strong> Aplicația rulează chiar acum pe un telefon Android obișnuit de 7.8 MB, fără echipamente scumpe de laborator.<br><br>
+      NightDoc este santinela care veghează la căpătâiul bolnavului atunci când nimeni altcineva nu poate. Vă mulțumim și așteptăm cu plăcere întrebările dumneavoastră!”
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">
+  <span>NightDoc AI • Hackathon Pitch Master Script (5:00)</span>
+  <span>Validat tehnic pe codul sursă & APK compilată</span>
+</div>
+
+</body>
+</html>

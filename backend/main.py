@@ -406,6 +406,22 @@ async def download_apk():
             )
     return JSONResponse(status_code=404, content={"error": "APK file not found on server"})
 
+@app.api_route("/download/script", methods=["GET", "HEAD"])
+async def download_script_pdf():
+    """Serves the 5-minute Presentation and Live Demo Script PDF."""
+    pdf_path = os.path.join(ROOT_DIR, "NightDoc_Script_Prezentare_si_Demo.pdf")
+    if os.path.exists(pdf_path):
+        return FileResponse(pdf_path, media_type="application/pdf", filename="NightDoc_Script_Prezentare_si_Demo.pdf")
+    return JSONResponse(status_code=404, content={"error": "Script PDF not found"})
+
+@app.api_route("/download/manual", methods=["GET", "HEAD"])
+async def download_manual_pdf():
+    """Serves the Technical Jury Defense Manual PDF."""
+    pdf_path = os.path.join(ROOT_DIR, "NightDoc_Manual_Tehnic_Intrebari_Jurati.pdf")
+    if os.path.exists(pdf_path):
+        return FileResponse(pdf_path, media_type="application/pdf", filename="NightDoc_Manual_Tehnic_Intrebari_Jurati.pdf")
+    return JSONResponse(status_code=404, content={"error": "Manual PDF not found"})
+
 @app.get("/test")
 async def serve_test_ui():
     """Simple, minimal test UI for local ONNX testing."""
