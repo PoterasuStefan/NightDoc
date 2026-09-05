@@ -77,23 +77,23 @@
 
 ```mermaid
 graph TD
-    A[Bedside Microphone / Smartphone] -->|Web Audio API PCM| B[WebSocket /ws/acoustic]
+    A["Bedside Microphone / Smartphone"] -->|"Web Audio API PCM"| B["WebSocket /ws/acoustic"]
     
-    subgraph Edge AI Sentinel (Local Machine / Mobile)
-        B --> C[Audio Preprocessor & Mel-Spectrogram]
-        C --> D[Microsoft ONNX Runtime Engine]
-        D -->|~10ms Inference| E{Biomarker Detected?}
-        E -->|Cough, Snore, Wheeze, Distress| F[HL7 FHIR R4 Observation Formatter]
-        E -->|Normal Ambient Baseline| G[Live Telemetry Stream]
+    subgraph EdgeAI ["Edge AI Sentinel (Local Machine / Mobile)"]
+        B --> C["Audio Preprocessor & Mel-Spectrogram"]
+        C --> D["Microsoft ONNX Runtime Engine"]
+        D -->|"~10ms Inference"| E{"Biomarker Detected?"}
+        E -->|"Cough, Snore, Wheeze, Distress"| F["HL7 FHIR R4 Observation Formatter"]
+        E -->|"Normal Ambient Baseline"| G["Live Telemetry Stream"]
     end
     
-    subgraph Microsoft Cloud & Clinical Ecosystem
-        F --> H[Azure Health Data Services FHIR Server]
-        F --> I[Azure AI Foundry / OpenAI GPT-4o-mini]
-        I --> J[Physician Clinical Synthesis Report]
+    subgraph AzureCloud ["Microsoft Cloud & Clinical Ecosystem"]
+        F --> H["Azure Health Data Services FHIR Server"]
+        F --> I["Azure AI Foundry / OpenAI GPT-4o-mini"]
+        I --> J["Physician Clinical Synthesis Report"]
     end
     
-    F --> K[Frontend Bedside Sentinel & Clinical Dashboard]
+    F --> K["Frontend Bedside Sentinel & Clinical Dashboard"]
     J --> K
 ```
 
